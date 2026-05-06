@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bella Moda Íntima</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E8C97A;
+    --gold-dark: #A07830;
+    --gold-pale: #F5EDD6;
+    --white: #FFFFFF;
+    --off-white: #FAF8F4;
+    --cream: #F2EDE3;
+    --text-dark: #2A1F0E;
+    --text-mid: #6B5A3E;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Montserrat', sans-serif;
+    background: var(--white);
+    color: var(--text-dark);
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    width: 12px; height: 12px;
+    background: var(--gold);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease, width 0.3s, height 0.3s, background 0.3s;
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 1.5px solid var(--gold);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: transform 0.15s ease, width 0.3s, height 0.3s;
+    opacity: 0.6;
+  }
+  .cursor.hover { width: 20px; height: 20px; background: var(--gold-light); }
+  .cursor-ring.hover { width: 50px; height: 50px; opacity: 1; }
+
+  /* ===== NAVBAR ===== */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 20px 60px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(201,168,76,0.2);
+    transition: padding 0.4s ease, box-shadow 0.4s ease;
+  }
+  nav.scrolled { padding: 12px 60px; box-shadow: 0 4px 30px rgba(201,168,76,0.1); }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px; font-weight: 600;
+    color: var(--gold-dark);
+    letter-spacing: 2px;
+  }
+  .nav-logo span { color: var(--gold); }
+  .nav-links { display: flex; gap: 40px; list-style: none; }
+  .nav-links a {
+    font-size: 12px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--text-mid); text-decoration: none;
+    position: relative; padding-bottom: 4px;
+    transition: color 0.3s;
+  }
+  .nav-links a::after {
+    content: ''; position: absolute; bottom: 0; left: 0;
+    width: 0; height: 1px; background: var(--gold);
+    transition: width 0.35s ease;
+  }
+  .nav-links a:hover { color: var(--gold); }
+  .nav-links a:hover::after { width: 100%; }
+
+  /* ===== HERO ===== */
+  .hero {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+    background: var(--off-white);
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background: 
+      radial-gradient(ellipse 60% 50% at 80% 50%, rgba(201,168,76,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 60% at 20% 30%, rgba(201,168,76,0.06) 0%, transparent 60%);
+  }
+  .hero-ornament {
+    position: absolute;
+    width: 600px; height: 600px;
+    border: 1px solid rgba(201,168,76,0.15);
+    border-radius: 50%;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    animation: rotate 30s linear infinite;
+  }
+  .hero-ornament::before {
+    content: '';
+    position: absolute; inset: 40px;
+    border: 1px solid rgba(201,168,76,0.1);
+    border-radius: 50%;
+  }
+  @keyframes rotate { to { transform: translate(-50%,-50%) rotate(360deg); } }
+
+  .hero-content {
+    text-align: center;
+    position: relative; z-index: 2;
+    animation: fadeUp 1.2s ease forwards;
+    opacity: 0;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-eyebrow {
+    font-size: 11px; letter-spacing: 5px; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 20px;
+    animation: fadeUp 1s ease 0.3s forwards; opacity: 0;
+  }
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(64px, 10vw, 120px);
+    font-weight: 300; line-height: 0.9;
+    color: var(--text-dark);
+    animation: fadeUp 1s ease 0.5s forwards; opacity: 0;
+  }
+  .hero-title em { color: var(--gold); font-style: italic; }
+  .hero-subtitle {
+    margin-top: 24px;
+    font-size: 13px; letter-spacing: 3px;
+    color: var(--text-mid); text-transform: uppercase;
+    animation: fadeUp 1s ease 0.7s forwards; opacity: 0;
+  }
+  .hero-divider {
+    width: 60px; height: 1px; background: var(--gold);
+    margin: 30px auto;
+    animation: fadeUp 1s ease 0.9s forwards; opacity: 0;
+  }
+  .hero-cta {
+    display: inline-block;
+    padding: 16px 50px;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+    text-decoration: none;
+    position: relative; overflow: hidden;
+    transition: color 0.4s ease;
+    animation: fadeUp 1s ease 1.1s forwards; opacity: 0;
+  }
+  .hero-cta::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: var(--gold);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 0.4s ease;
+    z-index: -1;
+  }
+  .hero-cta:hover { color: var(--white); }
+  .hero-cta:hover::before { transform: scaleX(1); }
+
+  .scroll-indicator {
+    position: absolute; bottom: 40px; left: 50%;
+    transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center;
+    gap: 8px; opacity: 0.5;
+    animation: fadeUp 1s ease 1.5s forwards;
+  }
+  .scroll-indicator span {
+    font-size: 9px; letter-spacing: 4px; text-transform: uppercase;
+    color: var(--gold);
+  }
+  .scroll-line {
+    width: 1px; height: 50px; background: var(--gold);
+    animation: scrollDown 2s ease infinite;
+  }
+  @keyframes scrollDown {
+    0% { transform: scaleY(0); transform-origin: top; }
+    50% { transform: scaleY(1); transform-origin: top; }
+    50.01% { transform: scaleY(1); transform-origin: bottom; }
+    100% { transform: scaleY(0); transform-origin: bottom; }
+  }
+
+  /* ===== SECTION COMMON ===== */
+  section { padding: 100px 60px; }
+  .section-label {
+    font-size: 10px; letter-spacing: 5px; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 16px; display: block;
+  }
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(36px, 5vw, 60px);
+    font-weight: 300; line-height: 1.1;
+    color: var(--text-dark);
+  }
+  .section-title em { color: var(--gold); font-style: italic; }
+  .gold-line { width: 50px; height: 2px; background: var(--gold); margin: 24px 0; }
+
+  /* ===== ABOUT ===== */
+  .about { background: var(--white); }
+  .about-inner {
+    max-width: 1200px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 80px;
+    align-items: center;
+  }
+  .about-text p {
+    font-size: 14px; line-height: 1.9;
+    color: var(--text-mid); margin-bottom: 20px;
+  }
+  .about-visual {
+    position: relative; height: 500px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .about-circle-outer {
+    width: 380px; height: 380px;
+    border: 1px solid rgba(201,168,76,0.3);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    animation: pulse 4s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+  }
+  .about-circle-inner {
+    width: 280px; height: 280px;
+    background: linear-gradient(135deg, var(--gold-pale), var(--cream));
+    border-radius: 50%;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    border: 1px solid rgba(201,168,76,0.4);
+  }
+  .about-circle-inner .logo-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 42px; color: var(--gold-dark);
+    font-style: italic; font-weight: 300;
+  }
+  .about-circle-inner .logo-sub {
+    font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
+    color: var(--gold); margin-top: 8px;
+  }
+  .about-stats {
+    display: flex; gap: 40px; margin-top: 40px;
+  }
+  .stat-item { text-align: center; }
+  .stat-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 48px; font-weight: 300; color: var(--gold);
+  }
+  .stat-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-mid); }
+
+  /* ===== CATALOG ===== */
+  .catalog { background: var(--off-white); }
+  .catalog-header { max-width: 1200px; margin: 0 auto 60px; text-align: center; }
+  .catalog-grid {
+    max-width: 1200px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+  }
+
+  .product-card {
+    background: var(--white);
+    border: 1px solid rgba(201,168,76,0.15);
+    overflow: hidden;
+    transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+    cursor: none;
+  }
+  .product-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 60px rgba(201,168,76,0.15);
+    border-color: rgba(201,168,76,0.5);
+  }
+  .product-visual {
+    height: 260px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+    background: var(--cream);
+  }
+  .product-visual::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, transparent 60%, rgba(201,168,76,0.12));
+  }
+  .product-visual .icon {
+    font-size: 72px;
+    transition: transform 0.5s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s;
+    filter: drop-shadow(0 4px 12px rgba(201,168,76,0.3));
+  }
+  .product-card:hover .icon {
+    transform: scale(1.15) rotate(-5deg);
+  }
+  .product-overlay {
+    position: absolute; inset: 0;
+    background: rgba(42,31,14,0.75);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity 0.4s ease;
+  }
+  .product-card:hover .product-overlay { opacity: 1; }
+  .overlay-btn {
+    padding: 12px 32px;
+    border: 1px solid var(--gold-light);
+    color: var(--gold-light);
+    font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+    cursor: none;
+    transform: translateY(10px);
+    transition: transform 0.4s 0.05s ease, background 0.3s;
+  }
+  .product-card:hover .overlay-btn {
+    transform: translateY(0);
+  }
+  .overlay-btn:hover {
+    background: rgba(201,168,76,0.2);
+  }
+  .product-info { padding: 24px; }
+  .product-tag {
+    font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 8px;
+  }
+  .product-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px; font-weight: 400; color: var(--text-dark);
+    margin-bottom: 8px;
+  }
+  .product-desc {
+    font-size: 12px; line-height: 1.7; color: var(--text-mid);
+  }
+
+  /* ===== HIGHLIGHT BANNER ===== */
+  .highlight {
+    background: linear-gradient(135deg, var(--text-dark) 0%, #3D2E1A 100%);
+    padding: 80px 60px;
+    text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .highlight::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 70% 100% at 50% 50%, rgba(201,168,76,0.08) 0%, transparent 70%);
+  }
+  .highlight-content { position: relative; z-index: 1; max-width: 700px; margin: 0 auto; }
+  .highlight-eyebrow {
+    font-size: 10px; letter-spacing: 5px; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 20px;
+  }
+  .highlight-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(40px, 6vw, 72px); font-weight: 300;
+    color: var(--white); line-height: 1;
+    margin-bottom: 24px;
+  }
+  .highlight-title em { color: var(--gold-light); font-style: italic; }
+  .highlight-text {
+    font-size: 13px; line-height: 1.8; color: rgba(255,255,255,0.6);
+    margin-bottom: 40px;
+  }
+  .highlight-btn {
+    display: inline-block;
+    padding: 18px 60px;
+    background: var(--gold);
+    color: var(--text-dark);
+    font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+    text-decoration: none;
+    transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    position: relative; overflow: hidden;
+  }
+  .highlight-btn::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: var(--gold-light);
+    transform: translateX(-100%);
+    transition: transform 0.4s ease;
+  }
+  .highlight-btn span { position: relative; z-index: 1; }
+  .highlight-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(201,168,76,0.4); }
+  .highlight-btn:hover::before { transform: translateX(0); }
+  .highlight-btn:active { transform: translateY(0); }
+
+  /* ===== FEATURES ===== */
+  .features { background: var(--white); }
+  .features-grid {
+    max-width: 1200px; margin: 60px auto 0;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px;
+  }
+  .feature-item { text-align: center; padding: 40px 20px; }
+  .feature-icon {
+    font-size: 36px; margin-bottom: 20px;
+    display: block;
+    transition: transform 0.3s ease;
+  }
+  .feature-item:hover .feature-icon { transform: scale(1.2) rotate(5deg); }
+  .feature-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px; font-weight: 400;
+    color: var(--text-dark); margin-bottom: 12px;
+  }
+  .feature-text {
+    font-size: 12px; line-height: 1.8; color: var(--text-mid);
+  }
+
+  /* ===== CONTACT / FOOTER ===== */
+  .contact {
+    background: var(--text-dark);
+    padding: 100px 60px 60px;
+    position: relative; overflow: hidden;
+  }
+  .contact::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  .contact-inner { max-width: 1200px; margin: 0 auto; }
+  .contact-top {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 60px;
+    padding-bottom: 60px;
+    border-bottom: 1px solid rgba(201,168,76,0.2);
+    margin-bottom: 40px;
+  }
+  .contact-brand .brand-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 36px; font-weight: 300; font-style: italic;
+    color: var(--gold); margin-bottom: 16px;
+  }
+  .contact-brand p {
+    font-size: 12px; line-height: 1.8; color: rgba(255,255,255,0.5);
+  }
+  .contact-col h4 {
+    font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 24px;
+  }
+  .contact-col p, .contact-col a {
+    font-size: 13px; line-height: 1.9; color: rgba(255,255,255,0.6);
+    display: block; text-decoration: none;
+    transition: color 0.3s;
+  }
+  .contact-col a:hover { color: var(--gold-light); }
+
+  /* WhatsApp button */
+  .whatsapp-btn {
+    display: inline-flex; align-items: center; gap: 12px;
+    margin-top: 20px;
+    padding: 14px 28px;
+    background: #25D366;
+    color: white; text-decoration: none;
+    font-size: 12px; letter-spacing: 1px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s;
+    position: relative; overflow: hidden;
+  }
+  .whatsapp-btn::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: #1fba59;
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 0.35s ease; z-index: 0;
+  }
+  .whatsapp-btn span { position: relative; z-index: 1; }
+  .whatsapp-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(37,211,102,0.4); }
+  .whatsapp-btn:hover::before { transform: scaleX(1); }
+
+  .contact-map-link {
+    display: inline-flex; align-items: center; gap: 8px;
+    margin-top: 12px;
+    font-size: 11px; color: var(--gold); text-decoration: none;
+    letter-spacing: 2px; text-transform: uppercase;
+    transition: gap 0.3s;
+  }
+  .contact-map-link:hover { gap: 14px; }
+
+  .contact-bottom {
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .copyright {
+    font-size: 11px; color: rgba(255,255,255,0.3); letter-spacing: 1px;
+  }
+  .footer-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px; font-style: italic; color: var(--gold-dark);
+  }
+
+  /* ===== FLOATING WHATSAPP ===== */
+  .float-wa {
+    position: fixed; bottom: 30px; right: 30px; z-index: 200;
+    width: 58px; height: 58px;
+    background: #25D366;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    text-decoration: none;
+    box-shadow: 0 8px 25px rgba(37,211,102,0.4);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    animation: floatWA 0.8s ease 2s both;
+  }
+  @keyframes floatWA {
+    from { opacity: 0; transform: scale(0); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  .float-wa:hover { transform: scale(1.1); box-shadow: 0 12px 35px rgba(37,211,102,0.6); }
+  .float-wa svg { width: 28px; height: 28px; fill: white; }
+
+  /* ===== SCROLL REVEAL ===== */
+  .reveal {
+    opacity: 0; transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+  .reveal-delay-5 { transition-delay: 0.5s; }
+
+  /* ===== RIPPLE ===== */
+  .ripple-container { position: relative; overflow: hidden; }
+  .ripple-effect {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(201,168,76,0.3);
+    transform: scale(0);
+    animation: ripple 0.6s linear;
+    pointer-events: none;
+  }
+  @keyframes ripple {
+    to { transform: scale(4); opacity: 0; }
+  }
+
+  @media (max-width: 768px) {
+    nav { padding: 16px 24px; }
+    nav.scrolled { padding: 10px 24px; }
+    .nav-links { display: none; }
+    section { padding: 70px 24px; }
+    .hero-ornament { width: 300px; height: 300px; }
+    .about-inner { grid-template-columns: 1fr; gap: 40px; }
+    .about-visual { height: 300px; }
+    .catalog-grid { grid-template-columns: 1fr 1fr; }
+    .features-grid { grid-template-columns: 1fr 1fr; }
+    .contact-top { grid-template-columns: 1fr; gap: 40px; }
+    .contact-bottom { flex-direction: column; gap: 16px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- Floating WhatsApp -->
+<a class="float-wa" href="https://wa.me/5562914662439" target="_blank" title="Fale conosco">
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+</a>
+
+<!-- Navbar -->
+<nav id="navbar">
+  <div class="nav-logo">Bella <span>Moda</span> Íntima</div>
+  <ul class="nav-links">
+    <li><a href="#inicio">Início</a></li>
+    <li><a href="#sobre">Sobre</a></li>
+    <li><a href="#catalogo">Coleção</a></li>
+    <li><a href="#contato">Contato</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="inicio">
+  <div class="hero-bg"></div>
+  <div class="hero-ornament"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Elegância & Sensualidade</p>
+    <h1 class="hero-title">Bella<br><em>Moda</em><br>Íntima</h1>
+    <p class="hero-subtitle">Lingerie Feminina Premium</p>
+    <div class="hero-divider"></div>
+    <a href="#catalogo" class="hero-cta ripple-container">Ver Coleção</a>
+  </div>
+  <div class="scroll-indicator">
+    <span>Rolar</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- SOBRE -->
+<section class="about" id="sobre">
+  <div class="about-inner">
+    <div class="about-text reveal">
+      <span class="section-label">Nossa História</span>
+      <h2 class="section-title">Confiança &<br><em>Elegância</em></h2>
+      <div class="gold-line"></div>
+      <p>A Bella Moda Íntima nasceu da paixão por oferecer às mulheres peças que unem beleza, conforto e sensualidade. Acreditamos que a lingerie certa tem o poder de transformar o dia a dia e elevar a autoestima.</p>
+      <p>Nossa curadoria seleciona peças com qualidade superior, tecidos delicados e design sofisticado — porque cada mulher merece se sentir especial todos os dias.</p>
+      <div class="about-stats">
+        <div class="stat-item">
+          <div class="stat-number">500+</div>
+          <div class="stat-label">Produtos</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">5★</div>
+          <div class="stat-label">Avaliações</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">100%</div>
+          <div class="stat-label">Qualidade</div>
+        </div>
+      </div>
+    </div>
+    <div class="about-visual reveal reveal-delay-2">
+      <div class="about-circle-outer">
+        <div class="about-circle-inner">
+          <div class="logo-text">Bella</div>
+          <div class="logo-sub">Moda Íntima</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CATÁLOGO -->
+<section class="catalog" id="catalogo">
+  <div class="catalog-header reveal">
+    <span class="section-label">Nossa Coleção</span>
+    <h2 class="section-title">Estoque <em>Exclusivo</em></h2>
+    <div class="gold-line" style="margin: 24px auto;"></div>
+    <p style="font-size:13px; color:var(--text-mid); max-width:500px; margin:0 auto; line-height:1.8">
+      Peças cuidadosamente selecionadas para realçar a beleza e o bem-estar de cada mulher.
+    </p>
+  </div>
+
+  <div class="catalog-grid">
+    <!-- Lingerie -->
+    <div class="product-card ripple-container reveal reveal-delay-1">
+      <div class="product-visual">
+        <img src="lingerie.png" alt="Lingerie" />
+        <div class="product-overlay">
+          <div class="overlay-btn">Ver Mais</div>
+        </div>
+      </div>
+      <div class="product-info">
+        <div class="product-tag">Destaque</div>
+        <div class="product-name">Lingerie</div>
+        <div class="product-desc">Conjuntos delicados em renda, cetim e microfibra. Do romântico ao ousado, para cada ocasião especial.</div>
+      </div>
+    </div>
+
+    <!-- Calcinhas -->
+    <div class="product-card ripple-container reveal reveal-delay-2">
+      <div class="product-visual">
+        <img src="calcinha.png" alt="Calcinhas" />
+        <div class="product-overlay">
+          <div class="overlay-btn">Ver Mais</div>
+        </div>
+      </div>
+      <div class="product-info">
+        <div class="product-tag">Essencial</div>
+        <div class="product-name">Calcinhas</div>
+        <div class="product-desc">Modelos variados: fio-dental, calcinha samba-canção, biquíni, tanga e mais. Conforto e estilo no dia a dia.</div>
+      </div>
+    </div>
+
+    <!-- Fantasias +18 -->
+    <div class="product-card ripple-container reveal reveal-delay-3">
+      <div class="product-visual">
+        <img src="fantasia.png" alt="Fantasias" />
+        <div class="product-overlay">
+          <div class="overlay-btn">Ver Mais</div>
+        </div>
+      </div>
+      <div class="product-info">
+        <div class="product-tag">Fantasias</div>
+        <div class="product-name">Fantasias/Sexy</div>
+        <div class="product-desc">Coleção sensual para momentos especiais. Explore sua criatividade com peças que encantam e surpreendem.</div>
+      </div>
+    </div>
+
+    <!-- Camisolas -->
+    <div class="product-card ripple-container reveal reveal-delay-2">
+      <div class="product-visual">
+        <img src="camisola.png" alt="Camisolas" />
+        <div class="product-overlay">
+          <div class="overlay-btn">Ver Mais</div>
+        </div>
+      </div>
+      <div class="product-info">
+        <div class="product-tag">Conforto & Charme</div>
+        <div class="product-name">Camisolas</div>
+        <div class="product-desc">Camisolas em cetim, renda e viscolycra para noites elegantes. Femininas, delicadas e irresistíveis.</div>
+      </div>
+    </div>
+
+    <!-- Biquinis -->
+    <div class="product-card ripple-container reveal reveal-delay-3">
+      <div class="product-visual">
+        <img src="biquini.png" alt="Biquinis" />
+        <div class="product-overlay">
+          <div class="overlay-btn">Ver Mais</div>
+        </div>
+      </div>
+      <div class="product-info">
+        <div class="product-tag">Verão</div>
+        <div class="product-name">Biquinis</div>
+        <div class="product-desc">Modelos modernos e ousados para arrasar na praia ou piscina. Estampas exclusivas e tecidos de alta qualidade.</div>
+      </div>
+    </div>
+
+    <!-- CTA Card -->
+    <div class="product-card ripple-container reveal reveal-delay-4"
+         style="background: linear-gradient(135deg, var(--text-dark), #3D2E1A);
+                border-color: rgba(201,168,76,0.4);
+                display:flex; flex-direction:column; align-items:center; justify-content:center;
+                padding:40px; text-align:center;">
+      <div style="font-size:48px; margin-bottom:20px;">✨</div>
+      <div style="font-family:'Cormorant Garamond',serif; font-size:26px; color:var(--gold); font-style:italic; margin-bottom:12px;">
+        Tem interesse?
+      </div>
+      <div style="font-size:12px; color:rgba(255,255,255,0.6); line-height:1.8; margin-bottom:28px;">
+        Entre em contato via WhatsApp e descubra nossa coleção completa.
+      </div>
+      <a href="https://wa.me/5562914662439" target="_blank"
+         style="display:inline-block; padding:14px 32px; background:var(--gold); color:var(--text-dark);
+                font-size:10px; letter-spacing:3px; text-transform:uppercase; text-decoration:none;
+                transition: transform 0.3s, box-shadow 0.3s;"
+         onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(201,168,76,0.4)'"
+         onmouseout="this.style.transform='';this.style.boxShadow=''">
+        Falar Agora
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- HIGHLIGHT -->
+<div class="highlight">
+  <div class="highlight-content reveal">
+    <div class="highlight-eyebrow">Exclusividade Para Você</div>
+    <h2 class="highlight-title">Sinta-se<br><em>linda</em> todos<br>os dias</h2>
+    <p class="highlight-text">Cada peça da Bella Moda Íntima foi pensada para valorizar a mulher em todos os momentos — seja para o dia a dia, para uma ocasião especial ou para se presentear.</p>
+    <a href="https://wa.me/5562914662439" target="_blank" class="highlight-btn ripple-container">
+      <span>Encomendar pelo WhatsApp</span>
+    </a>
+  </div>
+</div>
+
+<!-- DIFERENCIAIS -->
+<section class="features" id="features">
+  <div style="max-width:1200px; margin:0 auto; text-align:center;">
+    <span class="section-label reveal">Por que nos escolher</span>
+    <h2 class="section-title reveal reveal-delay-1">Nossos <em>Diferenciais</em></h2>
+  </div>
+  <div class="features-grid">
+    <div class="feature-item reveal reveal-delay-1">
+      <span class="feature-icon">🌟</span>
+      <h3 class="feature-title">Qualidade Premium</h3>
+      <p class="feature-text">Materiais selecionados, tecidos nobres e acabamento impecável em todas as peças da nossa coleção.</p>
+    </div>
+    <div class="feature-item reveal reveal-delay-2">
+      <span class="feature-icon">🚚</span>
+      <h3 class="feature-title">Entrega Rápida</h3>
+      <p class="feature-text">Atendimento ágil e entrega com discrição. Sua privacidade é nossa prioridade.</p>
+    </div>
+    <div class="feature-item reveal reveal-delay-3">
+      <span class="feature-icon">💎</span>
+      <h3 class="feature-title">Variedade Exclusiva</h3>
+      <p class="feature-text">Amplo estoque com as últimas tendências da moda íntima feminina.</p>
+    </div>
+    <div class="feature-item reveal reveal-delay-4">
+      <span class="feature-icon">💬</span>
+      <h3 class="feature-title">Atendimento Personalizado</h3>
+      <p class="feature-text">Nossa equipe está pronta para ajudar você a encontrar a peça perfeita.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CONTATO / FOOTER -->
+<footer class="contact" id="contato">
+  <div class="contact-inner">
+    <div class="contact-top">
+      <div class="contact-brand reveal">
+        <div class="brand-name">Bella Moda Íntima</div>
+        <p>Elegância, conforto e sensualidade em cada peça. Descubra a coleção que vai transformar seu dia a dia.</p>
+      </div>
+
+      <div class="contact-col reveal reveal-delay-2">
+        <h4>Localização</h4>
+        <p>Rua Professor Nelson Candido da Silva</p>
+        <p>Qd 09, Lote 10A</p>
+        <p>Vila Pai Eterno</p>
+        <p style="margin-top:8px;">Anápolis — GO</p>
+        <a href="https://maps.google.com/?q=Rua+Professor+Nelson+Candido+da+Silva,+Anapolis,+GO" 
+           target="_blank" class="contact-map-link" style="margin-top:16px;">
+          Ver no Mapa →
+        </a>
+      </div>
+
+      <div class="contact-col reveal reveal-delay-3">
+        <h4>Contato</h4>
+        <a href="tel:+5562914662439">+55 62 9146-6243</a>
+        <a href="https://wa.me/5562914662439" target="_blank" style="color:rgba(255,255,255,0.6);">+55 62 9146-6243</a>
+        <a class="whatsapp-btn ripple-container" href="https://wa.me/5562914662439" target="_blank" style="margin-top:20px;">
+          <span>💬 Chamar no WhatsApp</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="contact-bottom">
+      <p class="copyright">© 2024 Bella Moda Íntima — Todos os direitos reservados.</p>
+      <div class="footer-logo">Bella Moda Íntima</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+  });
+
+  function animateRing() {
+    rx += (mx - rx) * 0.15;
+    ry += (my - ry) * 0.15;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  document.querySelectorAll('a, button, .product-card, .overlay-btn').forEach(el => {
+    el.addEventListener('mouseenter', () => { cursor.classList.add('hover'); ring.classList.add('hover'); });
+    el.addEventListener('mouseleave', () => { cursor.classList.remove('hover'); ring.classList.remove('hover'); });
+  });
+
+  // Navbar scroll
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 50);
+  });
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.15 });
+  reveals.forEach(el => observer.observe(el));
+
+  // Ripple effect
+  document.querySelectorAll('.ripple-container').forEach(el => {
+    el.addEventListener('click', function(e) {
+      const rect = this.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height);
+      const x = e.clientX - rect.left - size / 2;
+      const y = e.clientY - rect.top - size / 2;
+      const ripple = document.createElement('span');
+      ripple.classList.add('ripple-effect');
+      ripple.style.cssText = `width:${size}px;height:${size}px;left:${x}px;top:${y}px`;
+      this.appendChild(ripple);
+      setTimeout(() => ripple.remove(), 600);
+    });
+  });
+</script>
+</body>
+</html>
