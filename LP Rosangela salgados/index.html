@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rosângela Salgados — Trindade, GO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --verde: #1e3d2f;
+    --verde-medio: #2d5a40;
+    --verde-claro: #3d7a55;
+    --dourado: #c9a84c;
+    --dourado-claro: #e8c97a;
+    --creme: #fdf6ec;
+    --creme-escuro: #f5e8d0;
+    --branco: #ffffff;
+    --texto-escuro: #1a1a1a;
+    --texto-medio: #4a4a4a;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--creme);
+    color: var(--texto-escuro);
+    overflow-x: hidden;
+  }
+
+  /* ── NAVBAR ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(30, 61, 47, 0.97);
+    backdrop-filter: blur(12px);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 48px;
+    height: 72px;
+    border-bottom: 1px solid rgba(201, 168, 76, 0.25);
+  }
+
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--dourado-claro);
+    letter-spacing: 0.03em;
+    text-decoration: none;
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .nav-logo span {
+    display: inline-flex;
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid var(--dourado);
+    flex-shrink: 0;
+  }
+  .nav-logo span img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+
+  .nav-links {
+    display: flex; gap: 32px; list-style: none;
+  }
+
+  .nav-links a {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(253,246,236,0.75);
+    text-decoration: none;
+    transition: color 0.25s;
+  }
+  .nav-links a:hover { color: var(--dourado-claro); }
+
+  .nav-cta {
+    background: var(--dourado);
+    color: var(--verde) !important;
+    padding: 10px 22px;
+    border-radius: 4px;
+    font-weight: 600 !important;
+    transition: background 0.25s !important;
+  }
+  .nav-cta:hover { background: var(--dourado-claro) !important; color: var(--verde) !important; }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    background: var(--verde);
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    overflow: hidden;
+  }
+
+  .hero-bg-pattern {
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(ellipse at 70% 50%, rgba(201,168,76,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse at 20% 80%, rgba(61,122,85,0.3) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .hero-left {
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 120px 64px 80px 80px;
+    position: relative; z-index: 2;
+  }
+
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--dourado);
+    margin-bottom: 28px;
+    opacity: 0; animation: fadeUp 0.7s 0.2s forwards;
+  }
+
+  .hero-tag::before {
+    content: '';
+    display: inline-block;
+    width: 28px; height: 1px;
+    background: var(--dourado);
+  }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.8rem, 4.5vw, 4.2rem);
+    font-weight: 800;
+    line-height: 1.12;
+    color: var(--creme);
+    margin-bottom: 28px;
+    opacity: 0; animation: fadeUp 0.7s 0.4s forwards;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: var(--dourado-claro);
+  }
+
+  .hero-desc {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.25rem;
+    font-weight: 300;
+    line-height: 1.7;
+    color: rgba(253,246,236,0.75);
+    max-width: 420px;
+    margin-bottom: 48px;
+    opacity: 0; animation: fadeUp 0.7s 0.6s forwards;
+  }
+
+  .hero-actions {
+    display: flex; gap: 16px; align-items: center;
+    opacity: 0; animation: fadeUp 0.7s 0.8s forwards;
+  }
+
+  .btn-primary {
+    background: var(--dourado);
+    color: var(--verde);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    padding: 16px 32px;
+    border-radius: 4px;
+    text-decoration: none;
+    border: none; cursor: pointer;
+    transition: background 0.25s, transform 0.2s;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: var(--dourado-claro); transform: translateY(-2px); }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--creme);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    padding: 16px 32px;
+    border-radius: 4px;
+    text-decoration: none;
+    border: 1px solid rgba(253,246,236,0.3);
+    transition: border-color 0.25s, color 0.25s, transform 0.2s;
+    display: inline-block;
+  }
+  .btn-outline:hover { border-color: var(--dourado); color: var(--dourado-claro); transform: translateY(-2px); }
+
+  .hero-stats {
+    display: flex; gap: 40px; margin-top: 64px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(201,168,76,0.2);
+    opacity: 0; animation: fadeUp 0.7s 1s forwards;
+  }
+
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--dourado-claro);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(253,246,236,0.5);
+    margin-top: 4px;
+  }
+
+  .hero-right {
+    position: relative; overflow: hidden;
+    opacity: 0; animation: fadeIn 1s 0.5s forwards;
+  }
+
+  .hero-right img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    filter: brightness(0.88) saturate(1.1);
+  }
+
+  .hero-right::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(to right, var(--verde) 0%, transparent 30%),
+                linear-gradient(to top, var(--verde) 0%, transparent 25%);
+  }
+
+  .hero-img-badge {
+    position: absolute; bottom: 40px; left: 40px; z-index: 3;
+    background: rgba(30,61,47,0.92);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(201,168,76,0.35);
+    border-radius: 8px;
+    padding: 18px 24px;
+    color: var(--creme);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    font-style: italic;
+  }
+
+  .hero-img-badge strong {
+    display: block;
+    font-family: 'Playfair Display', serif;
+    font-style: normal;
+    font-size: 1.15rem;
+    color: var(--dourado-claro);
+    margin-bottom: 4px;
+  }
+
+  /* ── DIVIDER ── */
+  .divider-wave {
+    height: 60px;
+    background: var(--verde);
+    clip-path: ellipse(55% 100% at 50% 0%);
+    margin-top: -1px;
+  }
+
+  /* ── SECTION BASE ── */
+  section { padding: 100px 80px; }
+
+  .section-tag {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--verde-claro);
+    margin-bottom: 16px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-tag::before { content: ''; width: 24px; height: 1px; background: var(--verde-claro); }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 3vw, 2.8rem);
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--verde);
+  }
+
+  .section-title em { font-style: italic; color: var(--dourado); }
+
+  /* ── SOBRE ── */
+  .sobre {
+    background: var(--creme);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .sobre-img-wrap {
+    position: relative;
+  }
+
+  .sobre-img-wrap img {
+    width: 100%;
+    height: 520px;
+    object-fit: cover;
+    border-radius: 4px;
+    display: block;
+  }
+
+  .sobre-img-wrap::before {
+    content: '';
+    position: absolute;
+    top: -16px; left: -16px;
+    width: 60%; height: 60%;
+    border: 2px solid var(--dourado);
+    border-radius: 4px;
+    z-index: -1;
+  }
+
+  .sobre-img-badge {
+    position: absolute;
+    bottom: -24px; right: -24px;
+    background: var(--verde);
+    color: var(--creme);
+    padding: 24px 28px;
+    border-radius: 4px;
+    font-family: 'Playfair Display', serif;
+  }
+
+  .sobre-img-badge .num {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--dourado-claro);
+    line-height: 1;
+  }
+
+  .sobre-img-badge .txt {
+    font-size: 0.85rem;
+    font-style: italic;
+    margin-top: 4px;
+    color: rgba(253,246,236,0.7);
+  }
+
+  .sobre-content { padding-right: 16px; }
+
+  .sobre-desc {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: var(--texto-medio);
+    margin: 24px 0 40px;
+  }
+
+  .diferenciais {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .diferencial {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 20px;
+    background: white;
+    border-radius: 4px;
+    border-left: 3px solid var(--dourado);
+  }
+
+  .diferencial-icon { font-size: 1.4rem; flex-shrink: 0; }
+
+  .diferencial-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--verde);
+    margin-bottom: 4px;
+  }
+
+  .diferencial-desc {
+    font-size: 0.8rem;
+    color: var(--texto-medio);
+    line-height: 1.5;
+  }
+
+  /* ── CARDÁPIO ── */
+  .cardapio {
+    background: var(--verde);
+    padding: 100px 80px;
+  }
+
+  .cardapio .section-tag { color: var(--dourado); }
+  .cardapio .section-tag::before { background: var(--dourado); }
+  .cardapio .section-title { color: var(--creme); }
+  .cardapio .section-title em { color: var(--dourado-claro); }
+
+  .cardapio-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 60px;
+  }
+
+  .cardapio-filtros {
+    display: flex; gap: 12px; flex-wrap: wrap;
+  }
+
+  .filtro-btn {
+    padding: 8px 20px;
+    border-radius: 30px;
+    border: 1px solid rgba(201,168,76,0.3);
+    background: transparent;
+    color: rgba(253,246,236,0.6);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .filtro-btn.active, .filtro-btn:hover {
+    background: var(--dourado);
+    border-color: var(--dourado);
+    color: var(--verde);
+  }
+
+  .cardapio-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+
+  .card-produto {
+    background: rgba(253,246,236,0.05);
+    border: 1px solid rgba(201,168,76,0.15);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.3s, border-color 0.3s;
+  }
+  .card-produto:hover { transform: translateY(-6px); border-color: rgba(201,168,76,0.5); }
+
+  .card-produto.destaque {
+    grid-column: span 2;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .card-img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .card-produto.destaque .card-img { height: 100%; }
+
+  .card-body {
+    padding: 24px;
+  }
+
+  .card-categoria {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--dourado);
+    margin-bottom: 8px;
+  }
+
+  .card-nome {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--creme);
+    margin-bottom: 10px;
+  }
+
+  .card-desc {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: rgba(253,246,236,0.6);
+    margin-bottom: 20px;
+  }
+
+  .card-preco {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--dourado-claro);
+  }
+
+  .card-preco span {
+    font-size: 0.85rem;
+    font-weight: 400;
+    color: rgba(253,246,236,0.4);
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  /* ── GALERIA QUOTE ── */
+  .galeria-quote {
+    background: var(--creme-escuro);
+    padding: 100px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .galeria-quote::before {
+    content: '"';
+    position: absolute;
+    top: -40px; left: 60px;
+    font-family: 'Playfair Display', serif;
+    font-size: 20rem;
+    color: rgba(30,61,47,0.06);
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .quote-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 64px;
+    align-items: center;
+  }
+
+  .quote-text {
+    position: relative;
+  }
+
+  blockquote {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.5rem, 2.2vw, 2rem);
+    font-style: italic;
+    line-height: 1.55;
+    color: var(--verde);
+    margin-bottom: 32px;
+  }
+
+  .quote-author {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--dourado);
+  }
+
+  .galeria-imgs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .galeria-imgs img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 4px;
+    display: block;
+  }
+
+  .galeria-imgs img:first-child {
+    height: 260px;
+    grid-row: span 2;
+    align-self: start;
+  }
+
+  /* ── LOCALIZAÇÃO ── */
+  .localizacao {
+    background: var(--verde);
+    padding: 100px 80px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .localizacao .section-tag { color: var(--dourado); }
+  .localizacao .section-tag::before { background: var(--dourado); }
+  .localizacao .section-title { color: var(--creme); }
+
+  .loc-desc {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    line-height: 1.75;
+    color: rgba(253,246,236,0.7);
+    margin: 24px 0 40px;
+  }
+
+  .loc-info-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 40px;
+  }
+
+  .loc-info-item {
+    display: flex; align-items: flex-start; gap: 16px;
+  }
+
+  .loc-icon {
+    width: 44px; height: 44px; flex-shrink: 0;
+    background: rgba(201,168,76,0.12);
+    border: 1px solid rgba(201,168,76,0.25);
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem;
+  }
+
+  .loc-info-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--dourado);
+    margin-bottom: 4px;
+  }
+
+  .loc-info-val {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    color: rgba(253,246,236,0.85);
+    line-height: 1.4;
+  }
+
+  .loc-buttons {
+    display: flex; flex-direction: column; gap: 12px;
+  }
+
+  .btn-loc {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 24px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.25s;
+    border: 1px solid transparent;
+  }
+
+  .btn-loc.verde {
+    background: var(--dourado);
+    color: var(--verde);
+  }
+  .btn-loc.verde:hover { background: var(--dourado-claro); transform: translateX(4px); }
+
+  .btn-loc.outline-wh {
+    border-color: rgba(253,246,236,0.2);
+    color: var(--creme);
+  }
+  .btn-loc.outline-wh:hover { border-color: var(--dourado); color: var(--dourado-claro); transform: translateX(4px); }
+
+  .btn-loc.insta {
+    background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045);
+    color: white;
+  }
+  .btn-loc.insta:hover { transform: translateX(4px); opacity: 0.92; }
+
+  .btn-loc-icon { font-size: 1.25rem; }
+  .btn-loc-arrow { margin-left: auto; opacity: 0.6; font-size: 1rem; }
+
+  .map-embed {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.4);
+    border: 1px solid rgba(201,168,76,0.2);
+  }
+
+  .map-embed iframe {
+    display: block;
+    width: 100%;
+    height: 480px;
+    border: none;
+    filter: saturate(0.7) brightness(0.85);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: #0f2019;
+    padding: 60px 80px 40px;
+    color: rgba(253,246,236,0.5);
+  }
+
+  .footer-top {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    padding-bottom: 40px;
+    border-bottom: 1px solid rgba(201,168,76,0.12);
+    margin-bottom: 32px;
+  }
+
+  .footer-brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--dourado-claro);
+  }
+
+  .footer-brand p {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.9rem;
+    font-style: italic;
+    color: rgba(253,246,236,0.4);
+    margin-top: 6px;
+    font-weight: 300;
+  }
+
+  .footer-links {
+    display: flex; gap: 64px;
+  }
+
+  .footer-col h4 {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--dourado);
+    margin-bottom: 20px;
+  }
+
+  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+
+  .footer-col a {
+    font-size: 0.85rem;
+    color: rgba(253,246,236,0.45);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-col a:hover { color: var(--dourado-claro); }
+
+  .footer-bottom {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 0.78rem;
+  }
+
+  /* ── FLOAT WHATSAPP ── */
+  .float-wa {
+    position: fixed; bottom: 28px; right: 28px; z-index: 999;
+    width: 58px; height: 58px;
+    background: #25D366;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.7rem;
+    text-decoration: none;
+    box-shadow: 0 6px 24px rgba(37,211,102,0.45);
+    transition: transform 0.25s, box-shadow 0.25s;
+    animation: pulse-wa 2.5s infinite;
+  }
+  .float-wa:hover { transform: scale(1.1); box-shadow: 0 10px 32px rgba(37,211,102,0.55); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; } to { opacity: 1; }
+  }
+  @keyframes pulse-wa {
+    0%, 100% { box-shadow: 0 6px 24px rgba(37,211,102,0.45); }
+    50% { box-shadow: 0 6px 32px rgba(37,211,102,0.7); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(36px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* ── MOBILE ── */
+  @media (max-width: 768px) {
+    nav { padding: 0 24px; }
+    .nav-links { display: none; }
+    section { padding: 64px 24px; }
+    .hero { grid-template-columns: 1fr; min-height: auto; }
+    .hero-left { padding: 120px 24px 48px; }
+    .hero-right { height: 300px; }
+    .hero-stats { gap: 24px; }
+    .sobre { grid-template-columns: 1fr; gap: 48px; padding: 64px 24px; }
+    .sobre-img-badge { bottom: -12px; right: -8px; }
+    .diferenciais { grid-template-columns: 1fr; }
+    .cardapio { padding: 64px 24px; }
+    .cardapio-header { flex-direction: column; align-items: flex-start; gap: 24px; }
+    .cardapio-grid { grid-template-columns: 1fr; }
+    .card-produto.destaque { grid-column: span 1; grid-template-columns: 1fr; }
+    .card-produto.destaque .card-img { height: 220px; }
+    .galeria-quote { padding: 64px 24px; }
+    .quote-grid { grid-template-columns: 1fr; gap: 40px; }
+    .localizacao { grid-template-columns: 1fr; gap: 48px; padding: 64px 24px; }
+    .footer-top { flex-direction: column; gap: 40px; }
+    .footer-links { flex-direction: column; gap: 32px; }
+    .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- FLOAT WHATSAPP -->
+<a href="https://wa.me/5562984381427" target="_blank" class="float-wa" title="Falar no WhatsApp">💬</a>
+
+<!-- NAVBAR -->
+<nav>
+  <a href="#" class="nav-logo">
+    <span><img src="data:image/png;base64,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" alt="Logo Rosângela Salgados"></span>
+    Rosângela Salgados
+  </a>
+  <ul class="nav-links">
+    <li><a href="#sobre">Sobre</a></li>
+    <li><a href="#cardapio">Cardápio</a></li>
+    <li><a href="#localizacao">Localização</a></li>
+    <li><a href="https://wa.me/5562984381427" target="_blank" class="nav-cta">Fazer Pedido</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="inicio">
+  <div class="hero-bg-pattern"></div>
+
+  <div class="hero-left">
+    <p class="hero-tag">Feito com amor em Trindade — GO</p>
+    <h1 class="hero-title">
+      Sabores que <em>aquecem</em> a alma.
+    </h1>
+    <p class="hero-desc">
+      Salgados artesanais, tortas cremosas, quitandas e muito mais — preparados diariamente com ingredientes frescos e receitas de família.
+    </p>
+    <div class="hero-actions">
+      <a href="#cardapio" class="btn-primary">Ver Cardápio</a>
+      <a href="https://wa.me/5562984381427" target="_blank" class="btn-outline">Fazer Pedido</a>
+    </div>
+    <div class="hero-stats">
+      <div>
+        <div class="stat-num">10+</div>
+        <div class="stat-label">Anos de receita</div>
+      </div>
+      <div>
+        <div class="stat-num">500+</div>
+        <div class="stat-label">Clientes felizes</div>
+      </div>
+      <div>
+        <div class="stat-num">100%</div>
+        <div class="stat-label">Artesanal</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <img
+      src="torta-de-frango.png"
+      alt="Torta artesanal Rosângela Salgados"
+    >
+    <div class="hero-img-badge">
+      <strong>Torta de Frango</strong>
+      Especial da casa ✨
+    </div>
+  </div>
+</section>
+
+<!-- SOBRE -->
+<section class="sobre" id="sobre">
+  <div class="sobre-img-wrap reveal">
+    <img
+      src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=800&q=80"
+      alt="Padaria artesanal"
+    >
+    <div class="sobre-img-badge">
+      <div class="num">❤️</div>
+      <div class="txt">Feito com carinho todo dia</div>
+    </div>
+  </div>
+
+  <div class="sobre-content reveal">
+    <p class="section-tag">Nossa história</p>
+    <h2 class="section-title">Uma cozinha cheia de <em>tradição</em> e afeto</h2>
+    <p class="sobre-desc">
+      A Rosângela Salgados nasceu do amor pela cozinha artesanal e pela vontade de levar comida de verdade para a mesa das pessoas. Cada salgado, cada fatia de torta e cada xícara de café é preparada com cuidado e dedicação, mantendo viva a tradição da culinária caseira goiana.
+    </p>
+    <div class="diferenciais">
+      <div class="diferencial">
+        <div class="diferencial-icon">🌿</div>
+        <div>
+          <div class="diferencial-label">Ingredientes frescos</div>
+          <div class="diferencial-desc">Selecionados diariamente para garantir qualidade e sabor</div>
+        </div>
+      </div>
+      <div class="diferencial">
+        <div class="diferencial-icon">👩‍🍳</div>
+        <div>
+          <div class="diferencial-label">Receitas de família</div>
+          <div class="diferencial-desc">Tradição passada de geração em geração</div>
+        </div>
+      </div>
+      <div class="diferencial">
+        <div class="diferencial-icon">📦</div>
+        <div>
+          <div class="diferencial-label">Encomendas</div>
+          <div class="diferencial-desc">Atendemos eventos, festas e pedidos especiais</div>
+        </div>
+      </div>
+      <div class="diferencial">
+        <div class="diferencial-icon">⚡</div>
+        <div>
+          <div class="diferencial-label">Sempre fresquinho</div>
+          <div class="diferencial-desc">Produção diária — nunca fica guardado!</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CARDÁPIO -->
+<section class="cardapio" id="cardapio">
+  <div class="cardapio-header reveal">
+    <div>
+      <p class="section-tag">O que temos pra você</p>
+      <h2 class="section-title">Nosso <em>Cardápio</em></h2>
+    </div>
+    <div class="cardapio-filtros">
+      <button class="filtro-btn active">Todos</button>
+      <button class="filtro-btn">Salgados</button>
+      <button class="filtro-btn">Tortas</button>
+      <button class="filtro-btn">Doces</button>
+      <button class="filtro-btn">Bebidas</button>
+    </div>
+  </div>
+
+  <div class="cardapio-grid">
+
+    <!-- DESTAQUE: Torta de Frango -->
+    <div class="card-produto destaque reveal">
+      <img class="card-img"
+        src="torta-de-frango2.png"
+        alt="Torta de Frango">
+      <div class="card-body">
+        <div class="card-categoria">⭐ Destaque da Casa</div>
+        <div class="card-nome">Torta de Frango</div>
+        <div class="card-desc">
+          Nossa torta mais amada — recheio cremoso de frango desfiado com queijo derretido, cobertura dourada e crocante. Puro conforto em cada fatia.
+        </div>
+        <div class="card-preco">A partir de R$ 12 <span>/ fatia</span></div>
+      </div>
+    </div>
+
+    <!-- Coxinha -->
+    <div class="card-produto reveal">
+      <img class="card-img"
+        src="coxinha-de-frango.jpg"
+        alt="Coxinha de frango">
+      <div class="card-body">
+        <div class="card-categoria">🍗 Salgado</div>
+        <div class="card-nome">Coxinha de Frango</div>
+        <div class="card-desc">Coxinha cremosa com recheio de frango, massa fina e fritura na hora.</div>
+        <div class="card-preco">R$ 5 <span>/ un.</span></div>
+      </div>
+    </div>
+
+    <!-- Enroladinho -->
+    <div class="card-produto reveal">
+      <img class="card-img"
+        src="enroladinho.png"
+        alt="Enroladinho de queijo e salsicha">
+      <div class="card-body">
+        <div class="card-categoria">🧀 Salgado</div>
+        <div class="card-nome">Enroladinho de Queijo e Salsicha</div>
+        <div class="card-desc">Massa macia, queijo derretido e salsicha — clássico irresistível.</div>
+        <div class="card-preco">R$ 4 <span>/ un.</span></div>
+      </div>
+    </div>
+
+    <!-- Quitandas -->
+    <div class="card-produto reveal">
+      <img class="card-img"
+        src="quitanda.jpeg"
+        alt="Quitandas goianas">
+      <div class="card-body">
+        <div class="card-categoria">🌽 Quitanda</div>
+        <div class="card-nome">Quitandas Goianas</div>
+        <div class="card-desc">Broinhas de milho, biscoito de queijo e roscas — tradição do interior de Goiás.</div>
+        <div class="card-preco">R$ 3 <span>/ un.</span></div>
+      </div>
+    </div>
+
+    <!-- Bolo -->
+    <div class="card-produto reveal">
+      <img class="card-img"
+        src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600&q=80"
+        alt="Bolo caseiro">
+      <div class="card-body">
+        <div class="card-categoria">🎂 Doce</div>
+        <div class="card-nome">Bolo Caseiro</div>
+        <div class="card-desc">Bolos de diversos sabores — chocolate, cenoura, milho. Inteiros ou fatias.</div>
+        <div class="card-preco">R$ 8 <span>/ fatia</span></div>
+      </div>
+    </div>
+
+    <!-- Café -->
+    <div class="card-produto reveal">
+      <img class="card-img"
+        src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&q=80"
+        alt="Café fresquinho">
+      <div class="card-body">
+        <div class="card-categoria">☕ Bebida</div>
+        <div class="card-nome">Café Fresquinho</div>
+        <div class="card-desc">Café coado na hora, do jeito goiano — forte, saboroso e acolhedor.</div>
+        <div class="card-preco">R$ 4 <span>/ copo</span></div>
+      </div>
+    </div>
+
+    <!-- Suco -->
+    <div class="card-produto reveal">
+      <img class="card-img"
+        src="https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=600&q=80"
+        alt="Sucos naturais">
+      <div class="card-body">
+        <div class="card-categoria">🍋 Bebida</div>
+        <div class="card-nome">Sucos Naturais</div>
+        <div class="card-desc">Caju, maracujá, laranja e outras frutas da estação, espremidos na hora.</div>
+        <div class="card-preco">R$ 7 <span>/ copo</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="text-align:center; margin-top: 56px;" class="reveal">
+    <a href="https://wa.me/5562984381427?text=Olá!%20Gostaria%20de%20fazer%20um%20pedido" target="_blank" class="btn-primary" style="font-size:1rem; padding: 18px 44px;">
+      Fazer Pedido pelo WhatsApp 💬
+    </a>
+  </div>
+</section>
+
+<!-- GALERIA + QUOTE -->
+<section class="galeria-quote">
+  <div class="quote-grid">
+    <div class="quote-text reveal">
+      <p class="section-tag">O que os clientes dizem</p>
+      <blockquote>
+        "Quando cheiro aquele enroladinho saindo do forno, parece que estou na casa da minha avó. Rosângela tem um dom especial."
+      </blockquote>
+      <p class="quote-author">— Cliente fiel, Trindade - GO</p>
+    </div>
+    <div class="galeria-imgs reveal">
+      <img
+        src="https://images.unsplash.com/photo-1549931319-a545dcf3bc73?w=500&q=80"
+        alt="Salgados frescos">
+      <img
+        src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=500&q=80"
+        alt="Pães artesanais">
+      <img
+        src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=500&q=80"
+        alt="Padaria">
+    </div>
+  </div>
+</section>
+
+<!-- LOCALIZAÇÃO -->
+<section class="localizacao" id="localizacao">
+  <div class="reveal">
+    <p class="section-tag">Onde nos encontrar</p>
+    <h2 class="section-title">Venha nos <em>visitar</em></h2>
+    <p class="loc-desc">
+      Estamos em Trindade — GO, prontos para te receber com muito carinho e os melhores salgados da região. Ou, se preferir, faça seu pedido online!
+    </p>
+
+    <ul class="loc-info-list">
+      <li class="loc-info-item">
+        <div class="loc-icon">📍</div>
+        <div>
+          <div class="loc-info-label">Endereço</div>
+          <div class="loc-info-val">Av. Elizabeth Marques — Parque dos Buritis<br>Trindade — GO, 74485-807</div>
+        </div>
+      </li>
+      <li class="loc-info-item">
+        <div class="loc-icon">📱</div>
+        <div>
+          <div class="loc-info-label">WhatsApp / Pedidos</div>
+          <div class="loc-info-val">(62) 98438-1427</div>
+        </div>
+      </li>
+      <li class="loc-info-item">
+        <div class="loc-icon">📸</div>
+        <div>
+          <div class="loc-info-label">Instagram</div>
+          <div class="loc-info-val">@salgados.rosangela</div>
+        </div>
+      </li>
+    </ul>
+
+    <div class="loc-buttons">
+      <a
+        href="https://www.google.com/maps/search/?api=1&query=Av.+Elizabeth+Marques,+Parque+dos+Buritis,+Trindade+GO"
+        target="_blank"
+        class="btn-loc verde">
+        <span class="btn-loc-icon">🗺️</span>
+        Abrir no Google Maps
+        <span class="btn-loc-arrow">→</span>
+      </a>
+      <a
+        href="https://wa.me/5562984381427?text=Olá!%20Vim%20pelo%20site%20e%20gostaria%20de%20fazer%20um%20pedido"
+        target="_blank"
+        class="btn-loc outline-wh">
+        <span class="btn-loc-icon">💬</span>
+        Falar no WhatsApp
+        <span class="btn-loc-arrow">→</span>
+      </a>
+      <a
+        href="https://www.instagram.com/salgados.rosangela"
+        target="_blank"
+        class="btn-loc insta">
+        <span class="btn-loc-icon">📷</span>
+        Ver no Instagram
+        <span class="btn-loc-arrow">→</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="map-embed reveal">
+    <iframe
+      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3820.1234!2d-49.4897!3d-16.6532!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x935ef2c6c7a5c4a1%3A0x0!2sAv.+Elizabeth+Marques%2C+Parque+dos+Buritis%2C+Trindade+-+GO%2C+74485-807!5e0!3m2!1spt-BR!2sbr!4v1680000000000"
+      loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade"
+      title="Localização Rosângela Salgados">
+    </iframe>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      Rosângela Salgados
+      <p>Feito com amor em Trindade — GO</p>
+    </div>
+    <div class="footer-links">
+      <div class="footer-col">
+        <h4>Navegação</h4>
+        <ul>
+          <li><a href="#sobre">Sobre</a></li>
+          <li><a href="#cardapio">Cardápio</a></li>
+          <li><a href="#localizacao">Localização</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contato</h4>
+        <ul>
+          <li><a href="https://wa.me/5562984381427" target="_blank">WhatsApp</a></li>
+          <li><a href="https://www.instagram.com/salgados.rosangela" target="_blank">Instagram</a></li>
+          <li><a href="https://www.google.com/maps/search/?api=1&query=Av.+Elizabeth+Marques,+Parque+dos+Buritis,+Trindade+GO" target="_blank">Localização</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 Rosângela Salgados — Todos os direitos reservados</span>
+    <span>Trindade — GO, Brasil 🇧🇷</span>
+  </div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 80);
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => observer.observe(el));
+
+  // Filtros do cardápio (decorativo)
+  document.querySelectorAll('.filtro-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>
