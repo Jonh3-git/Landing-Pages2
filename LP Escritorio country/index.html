@@ -47,14 +47,14 @@
     color: var(--dark); text-decoration: none;
     letter-spacing: .03em;
   }
-  .logo-icon {
-    width: 40px; height: 40px;
-    background: var(--dark);
+  /* Real logo image */
+  .logo-img {
+    width: 44px; height: 44px;
     border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
+    object-fit: cover;
+    border: 2px solid var(--tan);
     flex-shrink: 0;
   }
-  .logo-icon svg { width: 24px; height: 24px; fill: var(--tan); }
   .nav-links {
     display: flex; gap: 28px; list-style: none;
   }
@@ -152,20 +152,27 @@
     display: flex; gap: 12px; justify-content: center;
     flex-wrap: wrap;
   }
+  /* Clickable category item with hover glow */
   .cat-item {
     display: flex; flex-direction: column; align-items: center; gap: 10px;
     cursor: pointer;
-    transition: transform .2s;
+    transition: transform .25s;
+    text-decoration: none;
+    color: inherit;
   }
-  .cat-item:hover { transform: translateY(-3px); }
+  .cat-item:hover { transform: translateY(-5px); }
   .cat-circle {
     width: 72px; height: 72px; border-radius: 50%;
     background: var(--cream); border: 2px solid var(--border);
     display: flex; align-items: center; justify-content: center;
     font-size: 1.6rem;
-    transition: border-color .2s, background .2s;
+    transition: border-color .25s, background .25s, box-shadow .25s;
   }
-  .cat-item:hover .cat-circle { border-color: var(--tan); background: #f0e6d2; }
+  .cat-item:hover .cat-circle {
+    border-color: var(--tan);
+    background: #f0e6d2;
+    box-shadow: 0 0 0 4px rgba(200,169,110,.2), 0 6px 20px rgba(200,169,110,.25);
+  }
   .cat-label {
     font-size: .65rem; font-weight: 700; letter-spacing: .12em;
     text-transform: uppercase; color: var(--dark);
@@ -190,6 +197,280 @@
     content: ''; display: block; width: 60px; height: 1px; background: var(--tan);
   }
 
+  /* ── COLLECTION CARDS ── */
+  .collections-section { padding: 0 5% 50px; }
+  .collections-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .collection-card {
+    display: block; text-decoration: none; border: none; outline: none;
+    position: relative; overflow: hidden;
+    border-radius: 2px;
+    height: 380px;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+  }
+  .collection-img {
+    position: absolute; inset: 0;
+    background-size: cover; background-position: center;
+    transition: transform .55s cubic-bezier(.4,0,.2,1);
+  }
+  .collection-card:hover .collection-img { transform: scale(1.07); }
+  .collection-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(26,18,8,.88) 0%, rgba(26,18,8,.25) 55%, transparent 100%);
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 28px 24px;
+    transition: background .3s;
+  }
+  .collection-card:hover .collection-overlay {
+    background: linear-gradient(to top, rgba(26,18,8,.92) 0%, rgba(26,18,8,.4) 60%, transparent 100%);
+  }
+  .collection-tag {
+    font-size: .6rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase;
+    color: var(--tan); margin-bottom: 6px;
+  }
+  .collection-overlay h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem; font-weight: 900; color: var(--white);
+    line-height: 1.1; margin-bottom: 8px;
+  }
+  .collection-overlay p {
+    font-size: .8rem; color: rgba(253,250,244,.7); line-height: 1.5; margin-bottom: 16px;
+  }
+  .collection-cta {
+    font-size: .72rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--tan);
+    display: inline-block;
+    border-bottom: 1px solid rgba(200,169,110,.4);
+    padding-bottom: 2px;
+    transition: border-color .2s, color .2s;
+  }
+  .collection-card:hover .collection-cta { border-color: var(--tan); color: #e8c98a; }
+
+  @media (max-width: 700px) {
+    .collections-grid { grid-template-columns: 1fr; }
+    .collection-card { height: 260px; }
+  }
+
+  /* ── STOCK DRAWER ── */
+  .stock-drawer {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 500;
+    background: var(--white);
+    transform: translateY(-100%);
+    transition: transform .45s cubic-bezier(.4,0,.2,1);
+    box-shadow: 0 8px 48px rgba(0,0,0,.22);
+    max-height: 88vh;
+    display: flex; flex-direction: column;
+  }
+  .stock-drawer.open {
+    transform: translateY(0);
+  }
+  .drawer-backdrop {
+    position: fixed; inset: 0; z-index: 499;
+    background: rgba(26,18,8,.55);
+    opacity: 0; pointer-events: none;
+    transition: opacity .35s;
+  }
+  .drawer-backdrop.visible { opacity: 1; pointer-events: all; }
+
+  .drawer-inner {
+    display: flex; flex-direction: column;
+    height: 100%; overflow: hidden;
+  }
+  .drawer-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 5% 16px;
+    border-bottom: 1px solid var(--border);
+    background: var(--white);
+    flex-shrink: 0;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .drawer-eyebrow {
+    font-size: .65rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase;
+    color: var(--tan); display: block; margin-bottom: 4px;
+  }
+  .drawer-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem; font-weight: 900; color: var(--dark);
+  }
+  .drawer-actions { display: flex; align-items: center; gap: 20px; flex-shrink: 0; }
+  .drawer-page-link {
+    font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--tan-dark); text-decoration: none;
+    border-bottom: 1px solid var(--tan);
+    padding-bottom: 1px;
+    transition: color .2s;
+  }
+  .drawer-page-link:hover { color: var(--brown); }
+  .drawer-close {
+    background: none; border: none; cursor: pointer;
+    font-size: 1.3rem; color: var(--gray);
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    transition: background .2s, color .2s;
+  }
+  .drawer-close:hover { background: var(--cream); color: var(--dark); }
+
+  .drawer-filters {
+    padding: 14px 5%;
+    display: flex; gap: 8px; flex-wrap: wrap;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    background: var(--cream);
+  }
+  .drawer-filter-pill {
+    font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+    padding: 5px 14px; border: 1.5px solid var(--border);
+    background: var(--white); color: var(--dark);
+    cursor: pointer; border-radius: 20px;
+    transition: all .2s;
+  }
+  .drawer-filter-pill:hover, .drawer-filter-pill.active {
+    background: var(--dark); color: var(--white); border-color: var(--dark);
+  }
+
+  .drawer-list {
+    overflow-y: auto;
+    flex: 1;
+    padding: 24px 5% 40px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+    align-content: start;
+  }
+
+  /* Stock item card */
+  .stock-item {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 0;
+    background: var(--white);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    transition: box-shadow .2s, transform .2s;
+  }
+  .stock-item:hover { box-shadow: 0 4px 20px rgba(0,0,0,.1); transform: translateY(-2px); }
+  .stock-item.hidden { display: none; }
+
+  .stock-thumb {
+    width: 80px; height: 100%;
+    min-height: 110px;
+    object-fit: cover;
+    display: block;
+    background: var(--cream);
+  }
+  .stock-body { padding: 12px 14px; }
+  .stock-category {
+    font-size: .58rem; font-weight: 700; letter-spacing: .15em; text-transform: uppercase;
+    color: var(--tan-dark); margin-bottom: 3px;
+  }
+  .stock-name {
+    font-family: 'Libre Baskerville', serif;
+    font-size: .82rem; font-weight: 700; color: var(--dark);
+    line-height: 1.3; margin-bottom: 4px;
+  }
+  .stock-desc {
+    font-size: .7rem; color: var(--gray); line-height: 1.45; margin-bottom: 8px;
+    font-style: italic;
+  }
+  .stock-row { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; flex-wrap: wrap; }
+  .stock-label {
+    font-size: .58rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--dark); white-space: nowrap;
+  }
+
+  /* Cores em linha */
+  .stock-colors { display: flex; gap: 5px; flex-wrap: wrap; align-items: center; }
+  .stock-color-chip {
+    position: relative;
+    width: 16px; height: 16px; border-radius: 50%;
+    border: 1.5px solid rgba(0,0,0,.15);
+    cursor: default;
+  }
+  .stock-color-chip[title]:hover::after {
+    content: attr(title);
+    position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%);
+    background: var(--dark); color: #fff;
+    font-size: .55rem; white-space: nowrap;
+    padding: 2px 6px; border-radius: 3px;
+    pointer-events: none; z-index: 10;
+  }
+
+  /* Tamanhos como badges */
+  .stock-sizes { display: flex; gap: 4px; flex-wrap: wrap; }
+  .stock-size-badge {
+    font-size: .58rem; font-weight: 700;
+    background: var(--cream); color: var(--dark);
+    border: 1px solid var(--border);
+    padding: 1px 7px; border-radius: 2px;
+    white-space: nowrap;
+  }
+  .stock-size-badge.low {
+    background: #fff3cd; border-color: #e0c96e; color: #7a5c00;
+  }
+  .stock-size-badge.out {
+    background: #f5e0e0; border-color: #c8a0a0; color: #7a2020;
+    text-decoration: line-through; opacity: .7;
+  }
+
+  .stock-price {
+    font-size: .88rem; font-weight: 700; color: var(--brown);
+    margin-top: 6px;
+  }
+  .stock-badge {
+    display: inline-block; font-size: .55rem; font-weight: 800;
+    letter-spacing: .1em; text-transform: uppercase;
+    background: var(--red); color: #fff;
+    padding: 2px 6px; margin-left: 6px; vertical-align: middle;
+  }
+
+  /* Empty state */
+  .drawer-empty {
+    grid-column: 1/-1;
+    text-align: center; padding: 60px 20px;
+    color: var(--gray);
+  }
+  .drawer-empty .empty-icon { font-size: 2.5rem; margin-bottom: 12px; }
+  .drawer-empty p { font-size: .9rem; }
+
+  @media (max-width: 600px) {
+    .drawer-list { grid-template-columns: 1fr; }
+    .stock-drawer { max-height: 92vh; }
+  }
+
+  /* ── GENDER TABS ── */
+  .gender-tabs {
+    display: flex; justify-content: center; gap: 0;
+    margin: 0 5% 32px;
+    border: 1.5px solid var(--border);
+    max-width: 400px;
+    margin-left: auto; margin-right: auto;
+  }
+  .gender-tab {
+    flex: 1; padding: 11px 20px;
+    font-size: .75rem; font-weight: 700; letter-spacing: .12em;
+    text-transform: uppercase; cursor: pointer;
+    background: none; border: none;
+    color: var(--gray);
+    border-right: 1px solid var(--border);
+    transition: background .2s, color .2s;
+  }
+  .gender-tab:last-child { border-right: none; }
+  .gender-tab.active { background: var(--dark); color: var(--white); }
+  .gender-tab:hover:not(.active) { background: var(--cream); color: var(--dark); }
+
+  /* ── PRODUCT CATEGORY SECTIONS ── */
+  .gender-section { display: none; }
+  .gender-section.active { display: block; }
+
   /* ── PRODUCTS ── */
   .products { padding: 0 5% 50px; }
   .products-grid {
@@ -205,25 +486,71 @@
     transition: box-shadow .25s, transform .25s;
   }
   .product-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,.12); transform: translateY(-3px); }
+
+  /* ── IMAGE SLIDER ── */
   .product-img {
-    width: 100%; aspect-ratio: 3/3.5;
+    width: 100%;
+    aspect-ratio: 3/3.5;
+    position: relative;
+    overflow: hidden;
     background: var(--cream);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 3rem; overflow: hidden;
   }
-  .product-img img { width: 100%; height: 100%; object-fit: cover; }
+  .slide-track {
+    display: flex;
+    width: 100%; height: 100%;
+    transition: transform .45s cubic-bezier(.4,0,.2,1);
+  }
+  .slide-track img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+  /* Slider arrows */
+  .slide-btn {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    background: rgba(26,18,8,.55); color: #fff;
+    border: none; cursor: pointer;
+    width: 28px; height: 36px;
+    font-size: .85rem; z-index: 10;
+    opacity: 0;
+    transition: opacity .2s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .product-card:hover .slide-btn { opacity: 1; }
+  .slide-btn.prev { left: 0; }
+  .slide-btn.next { right: 0; }
+  /* Slider dots */
+  .slide-dots {
+    position: absolute; bottom: 7px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 5px; z-index: 10;
+  }
+  .slide-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: rgba(255,255,255,.55);
+    cursor: pointer;
+    transition: background .2s, transform .2s;
+  }
+  .slide-dot.active { background: #fff; transform: scale(1.3); }
+
+  /* Badge */
   .product-badge {
-    position: absolute; top: 10px; left: 10px;
+    position: absolute; top: 10px; left: 10px; z-index: 5;
     background: var(--red); color: #fff;
     font-size: .6rem; font-weight: 800; letter-spacing: .1em;
     text-transform: uppercase; padding: 3px 8px;
   }
-  .product-img { position: relative; }
+
   .product-info { padding: 14px 14px 18px; }
   .product-name {
     font-family: 'Libre Baskerville', serif;
     font-size: .85rem; font-weight: 700;
     color: var(--dark); margin-bottom: 4px; line-height: 1.4;
+  }
+  /* Fabric description */
+  .product-fabric {
+    font-size: .72rem; color: var(--tan-dark);
+    font-style: italic; margin-bottom: 5px;
+    line-height: 1.4;
   }
   .product-sizes {
     font-size: .7rem; color: var(--gray); margin-bottom: 6px;
@@ -236,6 +563,7 @@
   .color-dot {
     width: 14px; height: 14px; border-radius: 50%;
     border: 1.5px solid rgba(0,0,0,.15); cursor: pointer;
+    transition: transform .2s;
   }
   .color-dot:hover { transform: scale(1.3); }
   .btn-outline {
@@ -417,6 +745,13 @@
   .hero-center > *:nth-child(3) { animation-delay: .3s; }
   .hero-center > *:nth-child(4) { animation-delay: .4s; }
   .hero-center > *:nth-child(5) { animation-delay: .5s; }
+
+  /* scroll reveal */
+  .reveal {
+    opacity: 0; transform: translateY(28px);
+    transition: opacity .6s ease, transform .6s ease;
+  }
+  .reveal.visible { opacity: 1; transform: none; }
 </style>
 </head>
 <body>
@@ -424,19 +759,19 @@
 <!-- NAV -->
 <nav>
   <a class="logo" href="#">
-    <div class="logo-icon">
-      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <!-- Texas star simplified -->
-        <polygon points="12,2 14.5,9 22,9 16,13.5 18.5,21 12,16.5 5.5,21 8,13.5 2,9 9.5,9" />
-      </svg>
+    <!-- Real store logo image -->
+    <img class="logo-img" src="1778713354446_image.png" alt="Logo Escritório Country"
+         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+    <div class="logo-icon" style="display:none; width:44px;height:44px;background:var(--dark);border-radius:50%;align-items:center;justify-content:center;">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="#c8a96e"><polygon points="12,2 14.5,9 22,9 16,13.5 18.5,21 12,16.5 5.5,21 8,13.5 2,9 9.5,9" /></svg>
     </div>
     Escritório Country
   </a>
   <ul class="nav-links">
-    <li><a href="#" class="active">Início</a></li>
-    <li><a href="#">Coleções</a></li>
-    <li><a href="#">Categorias</a></li>
-    <li><a href="#">Sobre Nós</a></li>
+    <li><a href="index.html" class="active">Início</a></li>
+    <li><a href="masculino.html">Masculino</a></li>
+    <li><a href="feminino.html">Feminino</a></li>
+    <li><a href="infantil.html">Infantil</a></li>
     <li><a href="#contato">Contato</a></li>
   </ul>
   <div class="nav-icons">
@@ -452,7 +787,8 @@
 <!-- HERO -->
 <section class="hero">
   <div class="hero-side">
-    <img src="modelo-country-home.png" alt="Cowboy masculino" />
+    <img src="modelo-country-home.png" alt="Cowboy masculino"
+         onerror="this.src='https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=600&q=80'" />
   </div>
   <div class="hero-center">
     <p class="hero-eyebrow"><span>TRADIÇÃO</span>•<span>CONFORTO</span>•<span>DURABILIDADE</span></p>
@@ -462,20 +798,102 @@
     <a href="#produtos" class="btn-primary">VER NOVIDADES</a>
   </div>
   <div class="hero-side">
-    <img src="cowgirl-modelo.png" alt="Cowgirl feminina" />
+    <img src="cowgirl-modelo.png" alt="Cowgirl feminina"
+         onerror="this.src='https://images.unsplash.com/photo-1583744946564-b52ac1c389c8?w=600&q=80'" />
   </div>
 </section>
 
-<!-- CATEGORIES -->
+<!-- CATEGORIES — emojis clicáveis com hover + scroll suave -->
 <section class="categories">
   <div class="cat-grid">
-    <div class="cat-item"><div class="cat-circle">👢</div><span class="cat-label">Botas</span></div>
-    <div class="cat-item"><div class="cat-circle">👕</div><span class="cat-label">Camisas</span></div>
-    <div class="cat-item"><div class="cat-circle">👖</div><span class="cat-label">Calças</span></div>
-    <div class="cat-item"><div class="cat-circle">🤠</div><span class="cat-label">Chapéus</span></div>
-    <div class="cat-item"><div class="cat-circle">🪢</div><span class="cat-label">Cintos</span></div>
-    <div class="cat-item"><div class="cat-circle">🧢</div><span class="cat-label">Bonés</span></div>
-    <div class="cat-item"><div class="cat-circle">👗</div><span class="cat-label">Blusas</span></div>
+    <a class="cat-item" href="#" data-target="botas" title="Ver Botas">
+      <div class="cat-circle">👢</div>
+      <span class="cat-label">Botas</span>
+    </a>
+    <a class="cat-item" href="#" data-target="camisas" title="Ver Camisas">
+      <div class="cat-circle">👕</div>
+      <span class="cat-label">Camisas</span>
+    </a>
+    <a class="cat-item" href="#" data-target="calcas" title="Ver Calças">
+      <div class="cat-circle">👖</div>
+      <span class="cat-label">Calças</span>
+    </a>
+    <a class="cat-item" href="#" data-target="chapeus" title="Ver Chapéus">
+      <div class="cat-circle">🤠</div>
+      <span class="cat-label">Chapéus</span>
+    </a>
+    <a class="cat-item" href="#" data-target="cintos" title="Ver Cintos">
+      <div class="cat-circle">🪢</div>
+      <span class="cat-label">Cintos</span>
+    </a>
+    <a class="cat-item" href="#" data-target="bones" title="Ver Bonés">
+      <div class="cat-circle">🧢</div>
+      <span class="cat-label">Bonés</span>
+    </a>
+    <a class="cat-item" href="#" data-target="blusas" title="Ver Blusas">
+      <div class="cat-circle">👗</div>
+      <span class="cat-label">Blusas</span>
+    </a>
+  </div>
+</section>
+
+<!-- ══ STOCK DRAWER ══ -->
+<div id="stockDrawer" class="stock-drawer" aria-hidden="true">
+  <div class="drawer-inner">
+    <div class="drawer-header">
+      <div class="drawer-title-area">
+        <span class="drawer-eyebrow">Estoque Disponível</span>
+        <h2 class="drawer-title" id="drawerTitle">Coleção Masculina</h2>
+      </div>
+      <div class="drawer-actions">
+        <a class="drawer-page-link" id="drawerPageLink" href="masculino.html">Ver página completa →</a>
+        <button class="drawer-close" id="drawerClose" aria-label="Fechar">✕</button>
+      </div>
+    </div>
+
+    <!-- Filter pills inside drawer -->
+    <div class="drawer-filters" id="drawerFilters"></div>
+
+    <!-- Stock list -->
+    <div class="drawer-list" id="drawerList"></div>
+  </div>
+</div>
+<div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+<!-- COLLECTION CARDS — clique abre painel de estoque -->
+<section class="collections-section">
+  <div class="section-heading">
+    <h2>Nossas Coleções</h2>
+    <div class="ornament">★</div>
+  </div>
+  <div class="collections-grid">
+    <button class="collection-card" data-collection="masculino">
+      <div class="collection-img" style="background-image:url('https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=700&q=80')"></div>
+      <div class="collection-overlay">
+        <span class="collection-tag">Coleção</span>
+        <h3>Masculina</h3>
+        <p>Camisas, calças, botas, chapéus e muito mais</p>
+        <span class="collection-cta">Ver Estoque →</span>
+      </div>
+    </button>
+    <button class="collection-card" data-collection="feminino">
+      <div class="collection-img" style="background-image:url('https://images.unsplash.com/photo-1583744946564-b52ac1c389c8?w=700&q=80')"></div>
+      <div class="collection-overlay">
+        <span class="collection-tag">Coleção</span>
+        <h3>Feminina</h3>
+        <p>Blusas, vestidos, botas e acessórios exclusivos</p>
+        <span class="collection-cta">Ver Estoque →</span>
+      </div>
+    </button>
+    <button class="collection-card" data-collection="infantil">
+      <div class="collection-img" style="background-image:url('https://images.unsplash.com/photo-1519457431-44ccd64a579b?w=700&q=80')"></div>
+      <div class="collection-overlay">
+        <span class="collection-tag">Coleção</span>
+        <h3>Infantil</h3>
+        <p>Do bebê ao teen, com conforto e segurança</p>
+        <span class="collection-cta">Ver Estoque →</span>
+      </div>
+    </button>
   </div>
 </section>
 
@@ -485,193 +903,507 @@
     <h2>Destaques da Temporada</h2>
     <div class="ornament">★</div>
   </div>
-  <div class="products">
-    <div class="products-grid">
 
-      <!-- Card 1 – Camisa Country xadrez -->
-      <div class="product-card">
-        <div class="product-img">
-          <span class="product-badge">NOVO</span>
-          <img src="camiseta-country2.png" alt="Camisa Country Xadrez"
-            onerror="this.src='https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=400&q=80'" />
-        </div>
-        <div class="product-info">
-          <p class="product-name">Camisa Country Xadrez (100% Algodão)</p>
-          <p class="product-sizes">P, M, G, GG, XXL</p>
-          <p class="product-price">R$ 189,90</p>
-          <div class="product-colors">
-            <span class="color-dot" style="background:#b22222"></span>
-            <span class="color-dot" style="background:#1a1208"></span>
-            <span class="color-dot" style="background:#2b4d8c"></span>
-            <span class="color-dot" style="background:#1a6b4c"></span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Card 2 – Bota de couro cowboy -->
-      <div class="product-card">
-        <div class="product-img">
-          <img src="bota-country.png" alt="Bota Country Couro" />
-        </div>
-        <div class="product-info">
-          <p class="product-name">Bota Country Clássica (Couro Legítimo)</p>
-          <p class="product-sizes">Numeração: 35 ao 44</p>
-          <p class="product-price">R$ 399,90</p>
-          <div class="product-colors">
-            <span class="color-dot" style="background:#8b5e3c"></span>
-            <span class="color-dot" style="background:#1a1208"></span>
-            <span class="color-dot" style="background:#c8a96e"></span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Card 3 – Calça jeans country -->
-      <div class="product-card">
-        <div class="product-img">
-          <img src="calça-country.png" alt="Calça Country" />
-        </div>
-        <div class="product-info">
-          <p class="product-name">Calça Country Resistente</p>
-          <p class="product-sizes">Numeração: 36 ao 46</p>
-          <p class="product-price">R$ 229,90</p>
-          <div class="product-colors">
-            <span class="color-dot" style="background:#1e3a6b"></span>
-            <span class="color-dot" style="background:#6b9fcc"></span>
-            <span class="color-dot" style="background:#1a1208"></span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Card 4 – Camisa cowboy bordada -->
-      <div class="product-card">
-        <div class="product-img">
-          <img src="camiseta-country.png" alt="Camisa Country Bordada" />
-        </div>
-        <div class="product-info">
-          <p class="product-name">Camisa Country Bordada</p>
-          <p class="product-sizes">P, M, G, GG, XXL</p>
-          <p class="product-price">R$ 199,90</p>
-          <div class="product-colors">
-            <span class="color-dot" style="background:#1e3a6b"></span>
-            <span class="color-dot" style="background:#2b4d8c"></span>
-            <span class="color-dot" style="background:#1a1208"></span>
-            <span class="color-dot" style="background:#fff; border-color: #999;"></span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Card 5 – Blusa feminina country -->
-      <div class="product-card">
-        <div class="product-img">
-          <img src="camiseta-infan.png" alt="Camiseta Country Infantil" />
-        </div>
-        <div class="product-info">
-          <p class="product-name">Camiseta Country Infantil</p>
-          <p class="product-sizes">P, M, G, GG</p>
-          <p class="product-price">R$ 169,90</p>
-          <div class="product-colors">
-            <span class="color-dot" style="background:#8b5e3c"></span>
-            <span class="color-dot" style="background:#8b1a1a"></span>
-            <span class="color-dot" style="background:#1a1208"></span>
-            <span class="color-dot" style="background:#f5f0e8; border-color:#999;"></span>
-          </div>
-        </div>
-      </div>
-
-
-      <div class="product-card">
-        <div class="product-img">
-          <img src="camisa-infan.png" alt="Camisa Country Infantil" />
-        </div>
-        <div class="product-info">
-          <p class="product-name">Camisa Country Infantil</p>
-          <p class="product-sizes">P, M, G, GG</p>
-          <p class="product-price">R$ 169,90</p>
-          <div class="product-colors">
-            <span class="color-dot" style="background:#8b5e3c"></span>
-            <span class="color-dot" style="background:#8b1a1a"></span>
-            <span class="color-dot" style="background:#1a1208"></span>
-            <span class="color-dot" style="background:#f5f0e8; border-color:#999;"></span>
-          </div>
-        </div>
-      </div>
-
-
-      <div class="product-card">
-        <div class="product-img">
-          <img src="camisa-countryfem.png" alt="Blusa Country Feminina" />
-        </div>
-        <div class="product-info">
-          <p class="product-name">Blusa Country Feminina</p>
-          <p class="product-sizes">P, M, G, GG</p>
-          <p class="product-price">R$ 169,90</p>
-          <div class="product-colors">
-            <span class="color-dot" style="background:#8b5e3c"></span>
-            <span class="color-dot" style="background:#8b1a1a"></span>
-            <span class="color-dot" style="background:#1a1208"></span>
-            <span class="color-dot" style="background:#f5f0e8; border-color:#999;"></span>
-          </div>
-        </div>
-      </div>
-
-
-      <!-- Card 6 – Chapéu cowboy palha/couro -->
-      <div class="product-card">
-        <div class="product-img">
-          <img src="chapeu-country.png" alt="Chapéu Cowboy" />
-        </div>
-        <div class="product-info">
-          <p class="product-name">Chapéu Country Couro</p>
-          <p class="product-sizes">Tamanhos: P, M, G, GG</p>
-          <p class="product-price">R$ 249,90</p>
-          <div class="product-colors">
-            <span class="color-dot" style="background:#f5f0e8; border-color:#999;"></span>
-            <span class="color-dot" style="background:#8b5e3c"></span>
-            <span class="color-dot" style="background:#1a1208"></span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Card 7 – Cinto couro cowboy com fivela -->
-      <div class="product-card">
-        <div class="product-img">
-          <img src="cinto-country.png" alt="Cinto Couro Cowboy" />
-        </div>
-        <div class="product-info">
-          <p class="product-name">Cinto Country Couro com Fivela</p>
-          <p class="product-sizes">Tamanhos: 80 ao 120</p>
-          <p class="product-price">R$ 149,90</p>
-          <div class="product-colors">
-            <span class="color-dot" style="background:#8b5e3c"></span>
-            <span class="color-dot" style="background:#1a1208"></span>
-            <span class="color-dot" style="background:#c8a96e"></span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Card 8 – Boné country -->
-      <div class="product-card">
-        <div class="product-img">
-          <img src="bones-country.png" alt="Boné Country" />
-        </div>
-        <div class="product-info">
-          <p class="product-name">Boné Country Bordado</p>
-          <p class="product-sizes">Único</p>
-          <p class="product-price">R$ 89,90</p>
-          <div class="product-colors">
-            <span class="color-dot" style="background:#1a1208"></span>
-            <span class="color-dot" style="background:#8b1a1a"></span>
-            <span class="color-dot" style="background:#2b4d8c"></span>
-            <span class="color-dot" style="background:#c8a96e"></span>
-          </div>
-        </div>
-      </div>
-
-    </div>
-    <div class="products-cta">
-      <a href="#" class="btn-outline">VER TODOS OS PRODUTOS</a>
-    </div>
+  <!-- GENDER TABS -->
+  <div class="gender-tabs">
+    <button class="gender-tab active" data-section="masculino">♂ Masculino</button>
+    <button class="gender-tab" data-section="feminino">♀ Feminino</button>
+    <button class="gender-tab" data-section="infantil">🌟 Infantil</button>
   </div>
+
+  <!-- ══ MASCULINO ══ -->
+  <div class="gender-section active" id="masculino">
+    <div class="products">
+      <div class="products-grid">
+
+        <!-- Camisa Country Xadrez -->
+        <div class="product-card reveal" id="card-camisas">
+          <div class="product-img">
+            <span class="product-badge">NOVO</span>
+            <div class="slide-track">
+              <img src="camiseta-country2.png" alt="Camisa Country Xadrez"
+                   onerror="this.src='https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=400&q=80'" />
+              <img src="https://images.unsplash.com/photo-1602810316693-3667c854239a?w=400&q=80" alt="Camisa Country Xadrez detalhe" />
+              <img src="https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400&q=80" alt="Camisa Country Xadrez costas" />
+            </div>
+            <button class="slide-btn prev">&#8249;</button>
+            <button class="slide-btn next">&#8250;</button>
+            <div class="slide-dots">
+              <span class="slide-dot active"></span>
+              <span class="slide-dot"></span>
+              <span class="slide-dot"></span>
+            </div>
+          </div>
+          <div class="product-info">
+            <p class="product-name">Camisa Country Xadrez</p>
+            <p class="product-fabric">100% Algodão · Tecido Flanela · Respirável</p>
+            <p class="product-sizes">Tamanhos: P, M, G, GG, XXL</p>
+            <p class="product-price">R$ 189,90</p>
+            <div class="product-colors">
+              <span class="color-dot" style="background:#b22222"></span>
+              <span class="color-dot" style="background:#1a1208"></span>
+              <span class="color-dot" style="background:#2b4d8c"></span>
+              <span class="color-dot" style="background:#1a6b4c"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bota de couro cowboy -->
+        <div class="product-card reveal" id="card-botas">
+          <div class="product-img">
+            <div class="slide-track">
+              <img src="bota-country.png" alt="Bota Country Couro"
+                   onerror="this.src='https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&q=80'" />
+              <img src="https://images.unsplash.com/photo-1520639888713-7851133b1ed0?w=400&q=80" alt="Bota Country lateral" />
+              <img src="https://images.unsplash.com/photo-1518894781575-3c1b4b5b5b5b?w=400&q=80" alt="Bota Country sola"
+                   onerror="this.src='https://images.unsplash.com/photo-1565289056563-f74bcc9e0c23?w=400&q=80'" />
+            </div>
+            <button class="slide-btn prev">&#8249;</button>
+            <button class="slide-btn next">&#8250;</button>
+            <div class="slide-dots">
+              <span class="slide-dot active"></span>
+              <span class="slide-dot"></span>
+              <span class="slide-dot"></span>
+            </div>
+          </div>
+          <div class="product-info">
+            <p class="product-name">Bota Country Clássica</p>
+            <p class="product-fabric">Couro Legítimo Bovino · Sola Borracha Antiderrapante</p>
+            <p class="product-sizes">Numeração: 35 ao 44</p>
+            <p class="product-price">R$ 399,90</p>
+            <div class="product-colors">
+              <span class="color-dot" style="background:#8b5e3c"></span>
+              <span class="color-dot" style="background:#1a1208"></span>
+              <span class="color-dot" style="background:#c8a96e"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Calça jeans country -->
+        <div class="product-card reveal" id="card-calcas">
+          <div class="product-img">
+            <div class="slide-track">
+              <img src="calça-country.png" alt="Calça Country"
+                   onerror="this.src='https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=400&q=80'" />
+              <img src="https://images.unsplash.com/photo-1542272604-787c3835535d?w=400&q=80" alt="Calça Country detalhe" />
+              <img src="https://images.unsplash.com/photo-1603487742131-4160ec999306?w=400&q=80" alt="Calça Country costura" />
+            </div>
+            <button class="slide-btn prev">&#8249;</button>
+            <button class="slide-btn next">&#8250;</button>
+            <div class="slide-dots">
+              <span class="slide-dot active"></span>
+              <span class="slide-dot"></span>
+              <span class="slide-dot"></span>
+            </div>
+          </div>
+          <div class="product-info">
+            <p class="product-name">Calça Country Resistente</p>
+            <p class="product-fabric">Denim 100% Algodão · Reforço Duplo nas Costuras · Tratamento Stone</p>
+            <p class="product-sizes">Numeração: 36 ao 46</p>
+            <p class="product-price">R$ 229,90</p>
+            <div class="product-colors">
+              <span class="color-dot" style="background:#1e3a6b"></span>
+              <span class="color-dot" style="background:#6b9fcc"></span>
+              <span class="color-dot" style="background:#1a1208"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Camisa cowboy bordada -->
+        <div class="product-card reveal">
+          <div class="product-img">
+            <div class="slide-track">
+              <img src="camiseta-country.png" alt="Camisa Country Bordada"
+                   onerror="this.src='https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400&q=80'" />
+              <img src="https://images.unsplash.com/photo-1602810316693-3667c854239a?w=400&q=80" alt="Camisa Bordada detalhe" />
+              <img src="https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=400&q=80" alt="Camisa Bordada frontal" />
+            </div>
+            <button class="slide-btn prev">&#8249;</button>
+            <button class="slide-btn next">&#8250;</button>
+            <div class="slide-dots">
+              <span class="slide-dot active"></span>
+              <span class="slide-dot"></span>
+              <span class="slide-dot"></span>
+            </div>
+          </div>
+          <div class="product-info">
+            <p class="product-name">Camisa Country Bordada</p>
+            <p class="product-fabric">100% Algodão Penteado · Bordado Artesanal · Manga Longa</p>
+            <p class="product-sizes">Tamanhos: P, M, G, GG, XXL</p>
+            <p class="product-price">R$ 199,90</p>
+            <div class="product-colors">
+              <span class="color-dot" style="background:#1e3a6b"></span>
+              <span class="color-dot" style="background:#2b4d8c"></span>
+              <span class="color-dot" style="background:#1a1208"></span>
+              <span class="color-dot" style="background:#fff; border-color:#999;"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chapéu Country Couro -->
+        <div class="product-card reveal" id="card-chapeus">
+          <div class="product-img">
+            <div class="slide-track">
+              <img src="chapeu-country.png" alt="Chapéu Cowboy"
+                   onerror="this.src='https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=400&q=80'" />
+              <img src="https://images.unsplash.com/photo-1521369909029-2afed882baee?w=400&q=80" alt="Chapéu cowboy lateral" />
+              <img src="https://images.unsplash.com/photo-1622396481328-9b1b78cdd9fd?w=400&q=80" alt="Chapéu cowboy interior"
+                   onerror="this.src='https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=400&q=80'" />
+            </div>
+            <button class="slide-btn prev">&#8249;</button>
+            <button class="slide-btn next">&#8250;</button>
+            <div class="slide-dots">
+              <span class="slide-dot active"></span>
+              <span class="slide-dot"></span>
+              <span class="slide-dot"></span>
+            </div>
+          </div>
+          <div class="product-info">
+            <p class="product-name">Chapéu Country Couro</p>
+            <p class="product-fabric">Couro Legítimo / Palha Natural · Aba Larga 7cm · Suado Interno em Couro</p>
+            <p class="product-sizes">Tamanhos: P, M, G, GG</p>
+            <p class="product-price">R$ 249,90</p>
+            <div class="product-colors">
+              <span class="color-dot" style="background:#f5f0e8; border-color:#999;"></span>
+              <span class="color-dot" style="background:#8b5e3c"></span>
+              <span class="color-dot" style="background:#1a1208"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cinto couro cowboy com fivela -->
+        <div class="product-card reveal" id="card-cintos">
+          <div class="product-img">
+            <div class="slide-track">
+              <img src="cinto-country.png" alt="Cinto Couro Cowboy"
+                   onerror="this.src='https://images.unsplash.com/photo-1585386959984-a4155224a1ad?w=400&q=80'" />
+              <img src="https://images.unsplash.com/photo-1556306535-0f09a537f0a3?w=400&q=80" alt="Cinto fivela detalhe" />
+              <img src="https://images.unsplash.com/photo-1603344797033-f0f4f587ab60?w=400&q=80" alt="Cinto couro textura"
+                   onerror="this.src='https://images.unsplash.com/photo-1585386959984-a4155224a1ad?w=400&q=80'" />
+            </div>
+            <button class="slide-btn prev">&#8249;</button>
+            <button class="slide-btn next">&#8250;</button>
+            <div class="slide-dots">
+              <span class="slide-dot active"></span>
+              <span class="slide-dot"></span>
+              <span class="slide-dot"></span>
+            </div>
+          </div>
+          <div class="product-info">
+            <p class="product-name">Cinto Country Couro com Fivela</p>
+            <p class="product-fabric">Couro Bovino Curtido · Fivela Inox Escovado · Largura 4cm</p>
+            <p class="product-sizes">Tamanhos: 80 ao 120</p>
+            <p class="product-price">R$ 149,90</p>
+            <div class="product-colors">
+              <span class="color-dot" style="background:#8b5e3c"></span>
+              <span class="color-dot" style="background:#1a1208"></span>
+              <span class="color-dot" style="background:#c8a96e"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Boné country -->
+        <div class="product-card reveal" id="card-bones">
+          <div class="product-img">
+            <div class="slide-track">
+              <img src="bones-country.png" alt="Boné Country"
+                   onerror="this.src='https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=400&q=80'" />
+              <img src="https://images.unsplash.com/photo-1534215754734-18e55d13e346?w=400&q=80" alt="Boné frontal" />
+              <img src="https://images.unsplash.com/photo-1521369909029-2afed882baee?w=400&q=80" alt="Boné lateral" />
+            </div>
+            <button class="slide-btn prev">&#8249;</button>
+            <button class="slide-btn next">&#8250;</button>
+            <div class="slide-dots">
+              <span class="slide-dot active"></span>
+              <span class="slide-dot"></span>
+              <span class="slide-dot"></span>
+            </div>
+          </div>
+          <div class="product-info">
+            <p class="product-name">Boné Country Bordado</p>
+            <p class="product-fabric">Sarja 100% Algodão · Bordado em Alto Relevo · Ajuste Snapback</p>
+            <p class="product-sizes">Tamanho Único</p>
+            <p class="product-price">R$ 89,90</p>
+            <div class="product-colors">
+              <span class="color-dot" style="background:#1a1208"></span>
+              <span class="color-dot" style="background:#8b1a1a"></span>
+              <span class="color-dot" style="background:#2b4d8c"></span>
+              <span class="color-dot" style="background:#c8a96e"></span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="products-cta">
+        <a href="masculino.html" class="btn-outline">VER TODA COLEÇÃO MASCULINA</a>
+      </div>
+    </div>
+  </div><!-- /masculino -->
+
+  <!-- ══ FEMININO ══ -->
+  <div class="gender-section" id="feminino">
+    <div class="products">
+      <div class="products-grid">
+
+        <!-- Blusa feminina -->
+        <div class="product-card reveal" id="card-blusas">
+          <div class="product-img">
+            <span class="product-badge">NOVO</span>
+            <div class="slide-track">
+              <img src="camisa-countryfem.png" alt="Blusa Country Feminina"
+                   onerror="this.src='https://images.unsplash.com/photo-1516762689617-e1cffcef479d?w=400&q=80'" />
+              <img src="https://images.unsplash.com/photo-1578587018452-892bacefd3f2?w=400&q=80" alt="Blusa feminina detalhe" />
+              <img src="https://images.unsplash.com/photo-1564257577-c7efe9cfe651?w=400&q=80" alt="Blusa feminina costas" />
+            </div>
+            <button class="slide-btn prev">&#8249;</button>
+            <button class="slide-btn next">&#8250;</button>
+            <div class="slide-dots">
+              <span class="slide-dot active"></span>
+              <span class="slide-dot"></span>
+              <span class="slide-dot"></span>
+            </div>
+          </div>
+          <div class="product-info">
+            <p class="product-name">Blusa Country Feminina</p>
+            <p class="product-fabric">Viscose com Elastano · Toque Suave · Caimento Perfeito</p>
+            <p class="product-sizes">Tamanhos: P, M, G, GG</p>
+            <p class="product-price">R$ 169,90</p>
+            <div class="product-colors">
+              <span class="color-dot" style="background:#8b5e3c"></span>
+              <span class="color-dot" style="background:#8b1a1a"></span>
+              <span class="color-dot" style="background:#1a1208"></span>
+              <span class="color-dot" style="background:#f5f0e8; border-color:#999;"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vestido Country -->
+        <div class="product-card reveal">
+          <div class="product-img">
+            <div class="slide-track">
+              <img src="https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=400&q=80" alt="Vestido Country Feminino" />
+              <img src="https://images.unsplash.com/photo-1585487000160-6ebcfceb0d03?w=400&q=80" alt="Vestido Country detalhe" />
+              <img src="https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=400&q=80" alt="Vestido Country costas" />
+            </div>
+            <button class="slide-btn prev">&#8249;</button>
+            <button class="slide-btn next">&#8250;</button>
+            <div class="slide-dots">
+              <span class="slide-dot active"></span>
+              <span class="slide-dot"></span>
+              <span class="slide-dot"></span>
+            </div>
+          </div>
+          <div class="product-info">
+            <p class="product-name">Vestido Country Renda</p>
+            <p class="product-fabric">100% Algodão Tricoline · Renda Artesanal · Caimento Fluido</p>
+            <p class="product-sizes">Tamanhos: P, M, G, GG</p>
+            <p class="product-price">R$ 219,90</p>
+            <div class="product-colors">
+              <span class="color-dot" style="background:#f5f0e8; border-color:#999;"></span>
+              <span class="color-dot" style="background:#8b1a1a"></span>
+              <span class="color-dot" style="background:#1a6b4c"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Calça feminina flare -->
+        <div class="product-card reveal">
+          <div class="product-img">
+            <div class="slide-track">
+              <img src="https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=400&q=80" alt="Calça Flare Feminina" />
+              <img src="https://images.unsplash.com/photo-1566206091558-7f218b696731?w=400&q=80" alt="Calça Flare detalhe" />
+              <img src="https://images.unsplash.com/photo-1542272604-787c3835535d?w=400&q=80" alt="Calça Flare lateral" />
+            </div>
+            <button class="slide-btn prev">&#8249;</button>
+            <button class="slide-btn next">&#8250;</button>
+            <div class="slide-dots">
+              <span class="slide-dot active"></span>
+              <span class="slide-dot"></span>
+              <span class="slide-dot"></span>
+            </div>
+          </div>
+          <div class="product-info">
+            <p class="product-name">Calça Flare Country Feminina</p>
+            <p class="product-fabric">Denim Strech 2% Elastano · Cintura Alta · Lavagem Estonada</p>
+            <p class="product-sizes">Numeração: 36 ao 46</p>
+            <p class="product-price">R$ 239,90</p>
+            <div class="product-colors">
+              <span class="color-dot" style="background:#1e3a6b"></span>
+              <span class="color-dot" style="background:#6b9fcc"></span>
+              <span class="color-dot" style="background:#1a1208"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bota feminina -->
+        <div class="product-card reveal">
+          <div class="product-img">
+            <div class="slide-track">
+              <img src="https://images.unsplash.com/photo-1520639888713-7851133b1ed0?w=400&q=80" alt="Bota Country Feminina" />
+              <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&q=80" alt="Bota feminina lateral" />
+              <img src="https://images.unsplash.com/photo-1565289056563-f74bcc9e0c23?w=400&q=80" alt="Bota feminina detalhe" />
+            </div>
+            <button class="slide-btn prev">&#8249;</button>
+            <button class="slide-btn next">&#8250;</button>
+            <div class="slide-dots">
+              <span class="slide-dot active"></span>
+              <span class="slide-dot"></span>
+              <span class="slide-dot"></span>
+            </div>
+          </div>
+          <div class="product-info">
+            <p class="product-name">Bota Country Feminina Cano Médio</p>
+            <p class="product-fabric">Couro Nobuck · Solado Plataforma · Forro Acolchoado</p>
+            <p class="product-sizes">Numeração: 33 ao 40</p>
+            <p class="product-price">R$ 349,90</p>
+            <div class="product-colors">
+              <span class="color-dot" style="background:#8b5e3c"></span>
+              <span class="color-dot" style="background:#1a1208"></span>
+              <span class="color-dot" style="background:#8b1a1a"></span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="products-cta">
+        <a href="feminino.html" class="btn-outline">VER TODA COLEÇÃO FEMININA</a>
+      </div>
+    </div>
+  </div><!-- /feminino -->
+
+  <!-- ══ INFANTIL ══ -->
+  <div class="gender-section" id="infantil">
+    <div class="products">
+      <div class="products-grid">
+
+        <!-- Camiseta infantil -->
+        <div class="product-card reveal">
+          <div class="product-img">
+            <span class="product-badge">NOVO</span>
+            <div class="slide-track">
+              <img src="camiseta-infan.png" alt="Camiseta Country Infantil"
+                   onerror="this.src='https://images.unsplash.com/photo-1519457431-44ccd64a579b?w=400&q=80'" />
+              <img src="https://images.unsplash.com/photo-1596870230751-ebdfce98ec42?w=400&q=80" alt="Camiseta Infantil detalhe" />
+              <img src="https://images.unsplash.com/photo-1519457431-44ccd64a579b?w=400&q=80" alt="Camiseta Infantil costas" />
+            </div>
+            <button class="slide-btn prev">&#8249;</button>
+            <button class="slide-btn next">&#8250;</button>
+            <div class="slide-dots">
+              <span class="slide-dot active"></span>
+              <span class="slide-dot"></span>
+              <span class="slide-dot"></span>
+            </div>
+          </div>
+          <div class="product-info">
+            <p class="product-name">Camiseta Country Infantil</p>
+            <p class="product-fabric">100% Algodão Macio · Meia Malha · Hipoalergênico · Fácil Lavagem</p>
+            <p class="product-sizes">Tamanhos: 2 ao 14 anos</p>
+            <p class="product-price">R$ 89,90</p>
+            <div class="product-colors">
+              <span class="color-dot" style="background:#8b5e3c"></span>
+              <span class="color-dot" style="background:#8b1a1a"></span>
+              <span class="color-dot" style="background:#1a1208"></span>
+              <span class="color-dot" style="background:#f5f0e8; border-color:#999;"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Camisa infantil -->
+        <div class="product-card reveal">
+          <div class="product-img">
+            <div class="slide-track">
+              <img src="camisa-infan.png" alt="Camisa Country Infantil"
+                   onerror="this.src='https://images.unsplash.com/photo-1622290291468-a28f7a7dc6a8?w=400&q=80'" />
+              <img src="https://images.unsplash.com/photo-1596870230751-ebdfce98ec42?w=400&q=80" alt="Camisa Infantil detalhe" />
+              <img src="https://images.unsplash.com/photo-1519457431-44ccd64a579b?w=400&q=80" alt="Camisa Infantil frontal" />
+            </div>
+            <button class="slide-btn prev">&#8249;</button>
+            <button class="slide-btn next">&#8250;</button>
+            <div class="slide-dots">
+              <span class="slide-dot active"></span>
+              <span class="slide-dot"></span>
+              <span class="slide-dot"></span>
+            </div>
+          </div>
+          <div class="product-info">
+            <p class="product-name">Camisa Country Infantil Xadrez</p>
+            <p class="product-fabric">Flanela 100% Algodão · Tecido Extra Macio · Botões Resistentes</p>
+            <p class="product-sizes">Tamanhos: 4 ao 14 anos</p>
+            <p class="product-price">R$ 109,90</p>
+            <div class="product-colors">
+              <span class="color-dot" style="background:#8b5e3c"></span>
+              <span class="color-dot" style="background:#8b1a1a"></span>
+              <span class="color-dot" style="background:#1a1208"></span>
+              <span class="color-dot" style="background:#f5f0e8; border-color:#999;"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Calça infantil -->
+        <div class="product-card reveal">
+          <div class="product-img">
+            <div class="slide-track">
+              <img src="https://images.unsplash.com/photo-1519457431-44ccd64a579b?w=400&q=80" alt="Calça Infantil Country" />
+              <img src="https://images.unsplash.com/photo-1622290291468-a28f7a7dc6a8?w=400&q=80" alt="Calça Infantil detalhe" />
+              <img src="https://images.unsplash.com/photo-1596870230751-ebdfce98ec42?w=400&q=80" alt="Calça Infantil lateral" />
+            </div>
+            <button class="slide-btn prev">&#8249;</button>
+            <button class="slide-btn next">&#8250;</button>
+            <div class="slide-dots">
+              <span class="slide-dot active"></span>
+              <span class="slide-dot"></span>
+              <span class="slide-dot"></span>
+            </div>
+          </div>
+          <div class="product-info">
+            <p class="product-name">Calça Jeans Infantil Country</p>
+            <p class="product-fabric">Denim 100% Algodão · Elástico Regulável na Cintura · Reforço nos Joelhos</p>
+            <p class="product-sizes">Tamanhos: 4 ao 14 anos</p>
+            <p class="product-price">R$ 129,90</p>
+            <div class="product-colors">
+              <span class="color-dot" style="background:#1e3a6b"></span>
+              <span class="color-dot" style="background:#6b9fcc"></span>
+              <span class="color-dot" style="background:#1a1208"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bota infantil -->
+        <div class="product-card reveal">
+          <div class="product-img">
+            <div class="slide-track">
+              <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&q=80" alt="Bota Infantil Country" />
+              <img src="https://images.unsplash.com/photo-1565289056563-f74bcc9e0c23?w=400&q=80" alt="Bota Infantil lateral" />
+              <img src="https://images.unsplash.com/photo-1520639888713-7851133b1ed0?w=400&q=80" alt="Bota Infantil sola" />
+            </div>
+            <button class="slide-btn prev">&#8249;</button>
+            <button class="slide-btn next">&#8250;</button>
+            <div class="slide-dots">
+              <span class="slide-dot active"></span>
+              <span class="slide-dot"></span>
+              <span class="slide-dot"></span>
+            </div>
+          </div>
+          <div class="product-info">
+            <p class="product-name">Bota Country Infantil</p>
+            <p class="product-fabric">Couro Sintético Premium · Solado Antiderrapante · Fecho Lateral Zíper</p>
+            <p class="product-sizes">Numeração: 25 ao 35</p>
+            <p class="product-price">R$ 199,90</p>
+            <div class="product-colors">
+              <span class="color-dot" style="background:#8b5e3c"></span>
+              <span class="color-dot" style="background:#1a1208"></span>
+              <span class="color-dot" style="background:#c8a96e"></span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="products-cta">
+        <a href="infantil.html" class="btn-outline">VER TODA COLEÇÃO INFANTIL</a>
+      </div>
+    </div>
+  </div><!-- /infantil -->
+
 </section>
 
 <!-- BANNER -->
@@ -715,55 +1447,40 @@
   <div class="location-inner">
     <div class="location-text">
       <h2>Visite Nossa Loja</h2>
-
       <div class="location-detail">
         <span class="location-detail-icon">📍</span>
         <div class="location-detail-body">
           <p class="location-detail-label">Endereço</p>
-          <p class="location-detail-value">
-            GO-060, Qd 08 – LT 76 – St. Oeste<br>
-            Trindade – GO, 75392-760
-          </p>
+          <p class="location-detail-value">GO-060, Qd 08 – LT 76 – St. Oeste<br>Trindade – GO, 75392-760</p>
         </div>
       </div>
-
       <div class="location-detail">
         <span class="location-detail-icon">📞</span>
         <div class="location-detail-body">
           <p class="location-detail-label">Telefone / WhatsApp</p>
-          <p class="location-detail-value">
-            <a href="tel:+5562993962805">(62) 99396-2805</a>
-          </p>
+          <p class="location-detail-value"><a href="tel:+5562993962805">(62) 99396-2805</a></p>
         </div>
       </div>
-
       <div class="location-detail">
         <span class="location-detail-icon">📧</span>
         <div class="location-detail-body">
           <p class="location-detail-label">E-mail</p>
-          <p class="location-detail-value">
-            <a href="mailto:contato@escritoriocountry.com.br">contato@escritoriocountry.com.br</a>
-          </p>
+          <p class="location-detail-value"><a href="mailto:contato@escritoriocountry.com.br">contato@escritoriocountry.com.br</a></p>
         </div>
       </div>
-
       <div class="location-detail">
         <span class="location-detail-icon">🕐</span>
         <div class="location-detail-body">
           <p class="location-detail-label">Horário de Atendimento</p>
-          <p class="location-detail-value">
-            Segunda a Sexta: 8h às 18h<br>
-            Sábado: 8h às 13h
-          </p>
+          <p class="location-detail-value">Segunda a Sexta: 8h às 18h<br>Sábado: 8h às 13h</p>
         </div>
       </div>
     </div>
-
     <div class="map-frame">
       <iframe
         src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3823.0!2d-49.49!3d-16.665!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTbCsDM5JzU0LjAiUyA0OcKwMjknMjQuMCJX!5e0!3m2!1spt-BR!2sbr!4v1700000000000!5m2!1spt-BR!2sbr"
         allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
-        title="Localização Escritório Country – Trindade, GO">
+        title="Localização Escritório Country">
       </iframe>
     </div>
   </div>
@@ -774,22 +1491,23 @@
   <div class="footer-grid">
     <div class="footer-brand">
       <a class="logo" href="#">
-        <div class="logo-icon"><svg viewBox="0 0 24 24"><polygon points="12,2 14.5,9 22,9 16,13.5 18.5,21 12,16.5 5.5,21 8,13.5 2,9 9.5,9" /></svg></div>
+        <img class="logo-img" src="1778713354446_image.png" alt="Logo Escritório Country"
+             onerror="this.style.display='none';" />
         &nbsp;Escritório Country
       </a>
       <p>Tradição, conforto e durabilidade para quem vive o autêntico estilo cowboy.</p>
       <div class="social-links">
-        <a href="#" title="Instagram">&#x1F4F7;</a>
+        <a href="#" title="Instagram">📷</a>
         <a href="#" title="Facebook">f</a>
       </div>
     </div>
     <div class="footer-col">
-      <h4>Institucional</h4>
+      <h4>Coleções</h4>
       <ul>
-        <li><a href="#">Sobre Nós</a></li>
-        <li><a href="#">Nossas Lojas</a></li>
-        <li><a href="#">Política de Trocas</a></li>
-        <li><a href="#">Perguntas Frequentes</a></li>
+        <li><a href="masculino.html">Moda Masculina</a></li>
+        <li><a href="feminino.html">Moda Feminina</a></li>
+        <li><a href="infantil.html">Moda Infantil</a></li>
+        <li><a href="#">Lançamentos</a></li>
       </ul>
     </div>
     <div class="footer-col">
@@ -804,36 +1522,928 @@
     <div class="footer-col">
       <h4>Categorias</h4>
       <ul>
-        <li><a href="#">Botas</a></li>
-        <li><a href="#">Camisas e Blusas</a></li>
-        <li><a href="#">Calças</a></li>
-        <li><a href="#">Chapéus e Bonés</a></li>
-        <li><a href="#">Cintos e Acessórios</a></li>
+        <li><a href="#" data-target="botas">Botas</a></li>
+        <li><a href="#" data-target="camisas">Camisas e Blusas</a></li>
+        <li><a href="#" data-target="calcas">Calças</a></li>
+        <li><a href="#" data-target="chapeus">Chapéus e Bonés</a></li>
+        <li><a href="#" data-target="cintos">Cintos e Acessórios</a></li>
       </ul>
     </div>
   </div>
   <div class="footer-bottom">
-    © 2024 Escritório Country. Todos os direitos reservados.
+    © 2025 Escritório Country. Todos os direitos reservados.
   </div>
 </footer>
 
 <script>
-  // Mobile nav toggle
-  const btn = document.getElementById('hamburgerBtn');
-  const links = document.querySelector('.nav-links');
-  btn.addEventListener('click', () => {
-    const open = links.style.display === 'flex';
-    links.style.display = open ? 'none' : 'flex';
-    links.style.flexDirection = 'column';
-    links.style.position = 'absolute';
-    links.style.top = '64px';
-    links.style.left = '0'; links.style.right = '0';
-    links.style.background = '#fdfaf4';
-    links.style.padding = '16px 5%';
-    links.style.borderBottom = '1px solid rgba(92,61,30,.15)';
-    links.style.boxShadow = '0 4px 16px rgba(0,0,0,.08)';
-    links.style.zIndex = '99';
+// ── Mobile nav toggle ──────────────────────────────
+const hamburgerBtn = document.getElementById('hamburgerBtn');
+const navLinks = document.querySelector('.nav-links');
+hamburgerBtn.addEventListener('click', () => {
+  const open = navLinks.style.display === 'flex';
+  navLinks.style.display = open ? 'none' : 'flex';
+  navLinks.style.flexDirection = 'column';
+  navLinks.style.position = 'absolute';
+  navLinks.style.top = '64px';
+  navLinks.style.left = '0'; navLinks.style.right = '0';
+  navLinks.style.background = '#fdfaf4';
+  navLinks.style.padding = '16px 5%';
+  navLinks.style.borderBottom = '1px solid rgba(92,61,30,.15)';
+  navLinks.style.boxShadow = '0 4px 16px rgba(0,0,0,.08)';
+  navLinks.style.zIndex = '99';
+});
+
+// ── Gender tabs ────────────────────────────────────
+const tabs = document.querySelectorAll('.gender-tab');
+const sections = document.querySelectorAll('.gender-section');
+
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    tabs.forEach(t => t.classList.remove('active'));
+    sections.forEach(s => s.classList.remove('active'));
+    tab.classList.add('active');
+    const target = document.getElementById(tab.dataset.section);
+    if (target) target.classList.add('active');
   });
+});
+
+// ── Category emoji click → scroll to card ─────────
+// Map: data-target → card id + which gender tab to activate
+const catMap = {
+  botas:   { cardId: 'card-botas',   section: 'masculino' },
+  camisas: { cardId: 'card-camisas', section: 'masculino' },
+  calcas:  { cardId: 'card-calcas',  section: 'masculino' },
+  chapeus: { cardId: 'card-chapeus', section: 'masculino' },
+  cintos:  { cardId: 'card-cintos',  section: 'masculino' },
+  bones:   { cardId: 'card-bones',   section: 'masculino' },
+  blusas:  { cardId: 'card-blusas',  section: 'feminino'  },
+};
+
+document.querySelectorAll('[data-target]').forEach(el => {
+  el.addEventListener('click', e => {
+    e.preventDefault();
+    const key = el.dataset.target;
+    const map = catMap[key];
+    if (!map) return;
+
+    // 1. Activate the right gender tab
+    tabs.forEach(t => t.classList.remove('active'));
+    sections.forEach(s => s.classList.remove('active'));
+    const tabEl = document.querySelector(`.gender-tab[data-section="${map.section}"]`);
+    const secEl = document.getElementById(map.section);
+    if (tabEl) tabEl.classList.add('active');
+    if (secEl) secEl.classList.add('active');
+
+    // 2. Scroll to the card with a brief delay so section renders
+    setTimeout(() => {
+      const card = document.getElementById(map.cardId);
+      if (card) {
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Flash highlight
+        card.style.outline = '3px solid #c8a96e';
+        card.style.outlineOffset = '4px';
+        setTimeout(() => { card.style.outline = ''; card.style.outlineOffset = ''; }, 1800);
+      }
+    }, 80);
+  });
+});
+
+// ── Image Slider ───────────────────────────────────
+function initSliders() {
+  document.querySelectorAll('.product-img').forEach(container => {
+    const track = container.querySelector('.slide-track');
+    const dots  = container.querySelectorAll('.slide-dot');
+    const prevBtn = container.querySelector('.slide-btn.prev');
+    const nextBtn = container.querySelector('.slide-btn.next');
+    if (!track) return;
+
+    const slides = track.querySelectorAll('img');
+    let current = 0;
+    const total = slides.length;
+
+    function goTo(idx) {
+      current = (idx + total) % total;
+      track.style.transform = `translateX(-${current * 100}%)`;
+      dots.forEach((d, i) => d.classList.toggle('active', i === current));
+    }
+
+    if (prevBtn) prevBtn.addEventListener('click', e => { e.stopPropagation(); goTo(current - 1); });
+    if (nextBtn) nextBtn.addEventListener('click', e => { e.stopPropagation(); goTo(current + 1); });
+    dots.forEach((dot, i) => dot.addEventListener('click', () => goTo(i)));
+
+    // Auto-advance on hover pause, play on leave
+    let autoplay;
+    const startAuto = () => { autoplay = setInterval(() => goTo(current + 1), 3200); };
+    const stopAuto  = () => clearInterval(autoplay);
+    container.addEventListener('mouseenter', stopAuto);
+    container.addEventListener('mouseleave', startAuto);
+    startAuto();
+  });
+}
+initSliders();
+
+// ── Scroll reveal ──────────────────────────────────
+const revealObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+// ══════════════════════════════════════════════════
+// ── STOCK DRAWER ──────────────────────────────────
+// ══════════════════════════════════════════════════
+
+// ── Base de dados de estoque ───────────────────────
+const STOCK = {
+  masculino: {
+    label: 'Coleção Masculina',
+    page: 'masculino.html',
+    categories: ['Todos','Camisas','Calças','Botas','Chapéus','Cintos','Bonés'],
+    items: [
+      {
+        cat: 'Camisas',
+        name: 'Camisa Country Xadrez',
+        desc: '100% Algodão · Flanela · Respirável · Manga Longa',
+        price: 'R$ 189,90',
+        badge: 'NOVO',
+        img: 'https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=120&q=70',
+        colors: [
+          { hex: '#b22222', label: 'Vermelho' },
+          { hex: '#1a1208', label: 'Preto' },
+          { hex: '#2b4d8c', label: 'Azul Marinho' },
+          { hex: '#1a6b4c', label: 'Verde' },
+        ],
+        sizes: [
+          { s: 'P', status: 'ok' }, { s: 'M', status: 'ok' },
+          { s: 'G', status: 'low' }, { s: 'GG', status: 'ok' },
+          { s: 'XXL', status: 'low' },
+        ],
+      },
+      {
+        cat: 'Camisas',
+        name: 'Camisa Country Bordada',
+        desc: '100% Algodão Penteado · Bordado Artesanal · Manga Longa',
+        price: 'R$ 199,90',
+        badge: '',
+        img: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=120&q=70',
+        colors: [
+          { hex: '#1e3a6b', label: 'Azul Escuro' },
+          { hex: '#2b4d8c', label: 'Azul Royal' },
+          { hex: '#1a1208', label: 'Preto' },
+          { hex: '#fdfaf4', label: 'Branco', border: true },
+        ],
+        sizes: [
+          { s: 'P', status: 'ok' }, { s: 'M', status: 'ok' },
+          { s: 'G', status: 'ok' }, { s: 'GG', status: 'out' },
+          { s: 'XXL', status: 'low' },
+        ],
+      },
+      {
+        cat: 'Camisas',
+        name: 'Colete Jeans Country',
+        desc: 'Denim Pesado · Botões Metálicos · Bolsos Internos · Lavagem Estonada',
+        price: 'R$ 279,90',
+        badge: '',
+        img: 'https://images.unsplash.com/photo-1602810316693-3667c854239a?w=120&q=70',
+        colors: [
+          { hex: '#1e3a6b', label: 'Índigo' },
+          { hex: '#1a1208', label: 'Preto' },
+        ],
+        sizes: [
+          { s: 'P', status: 'ok' }, { s: 'M', status: 'ok' },
+          { s: 'G', status: 'low' }, { s: 'GG', status: 'out' },
+        ],
+      },
+      {
+        cat: 'Calças',
+        name: 'Calça Country Resistente',
+        desc: 'Denim 100% Algodão · Reforço Duplo nas Costuras · Tratamento Stone',
+        price: 'R$ 229,90',
+        badge: '',
+        img: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=120&q=70',
+        colors: [
+          { hex: '#1e3a6b', label: 'Azul Stone' },
+          { hex: '#6b9fcc', label: 'Azul Claro' },
+          { hex: '#1a1208', label: 'Preto' },
+        ],
+        sizes: [
+          { s: '36', status: 'ok' }, { s: '38', status: 'ok' },
+          { s: '40', status: 'ok' }, { s: '42', status: 'low' },
+          { s: '44', status: 'ok' }, { s: '46', status: 'out' },
+        ],
+      },
+      {
+        cat: 'Calças',
+        name: 'Calça Cargo Country',
+        desc: 'Canvas 100% Algodão · Bolsos Laterais · Elástico nos Tornozelos',
+        price: 'R$ 249,90',
+        badge: '',
+        img: 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=120&q=70',
+        colors: [
+          { hex: '#4a4a3a', label: 'Cáqui' },
+          { hex: '#1a1208', label: 'Preto' },
+          { hex: '#8b5e3c', label: 'Marrom' },
+        ],
+        sizes: [
+          { s: '36', status: 'ok' }, { s: '38', status: 'ok' },
+          { s: '40', status: 'ok' }, { s: '42', status: 'ok' },
+          { s: '44', status: 'low' }, { s: '46', status: 'low' },
+          { s: '48', status: 'out' },
+        ],
+      },
+      {
+        cat: 'Botas',
+        name: 'Bota Country Clássica',
+        desc: 'Couro Legítimo Bovino · Solado Borracha Antiderrapante · Forro em Couro',
+        price: 'R$ 399,90',
+        badge: '',
+        img: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=120&q=70',
+        colors: [
+          { hex: '#8b5e3c', label: 'Marrom Médio' },
+          { hex: '#1a1208', label: 'Preto' },
+          { hex: '#c8a96e', label: 'Caramelo' },
+        ],
+        sizes: [
+          { s: '37', status: 'ok' }, { s: '38', status: 'ok' },
+          { s: '39', status: 'ok' }, { s: '40', status: 'low' },
+          { s: '41', status: 'ok' }, { s: '42', status: 'ok' },
+          { s: '43', status: 'low' }, { s: '44', status: 'out' },
+          { s: '45', status: 'out' }, { s: '46', status: 'out' },
+        ],
+      },
+      {
+        cat: 'Botas',
+        name: 'Bota Rodeio Bico Fino',
+        desc: 'Couro Exótico Gravado · Biqueira Aço · Cano Alto 30cm · Solado TPU',
+        price: 'R$ 549,90',
+        badge: 'DESTAQUE',
+        img: 'https://images.unsplash.com/photo-1520639888713-7851133b1ed0?w=120&q=70',
+        colors: [
+          { hex: '#1a1208', label: 'Preto' },
+          { hex: '#8b5e3c', label: 'Marrom' },
+        ],
+        sizes: [
+          { s: '38', status: 'ok' }, { s: '39', status: 'ok' },
+          { s: '40', status: 'ok' }, { s: '41', status: 'ok' },
+          { s: '42', status: 'low' }, { s: '43', status: 'out' },
+          { s: '44', status: 'out' }, { s: '45', status: 'out' },
+          { s: '46', status: 'out' },
+        ],
+      },
+      {
+        cat: 'Chapéus',
+        name: 'Chapéu Country Couro',
+        desc: 'Couro Legítimo / Palha Natural · Aba Larga 7cm · Suado Interno em Couro',
+        price: 'R$ 249,90',
+        badge: '',
+        img: 'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=120&q=70',
+        colors: [
+          { hex: '#f5f0e8', label: 'Palha', border: true },
+          { hex: '#8b5e3c', label: 'Marrom' },
+          { hex: '#1a1208', label: 'Preto' },
+        ],
+        sizes: [
+          { s: 'P', status: 'ok' }, { s: 'M', status: 'ok' },
+          { s: 'G', status: 'low' }, { s: 'GG', status: 'out' },
+        ],
+      },
+      {
+        cat: 'Chapéus',
+        name: 'Chapéu Palha Natural',
+        desc: 'Palha Torcida Natural · Proteção UV · Banda Couro Interno',
+        price: 'R$ 179,90',
+        badge: 'OFERTA',
+        img: 'https://images.unsplash.com/photo-1521369909029-2afed882baee?w=120&q=70',
+        colors: [
+          { hex: '#f5f0e8', label: 'Palha Natural', border: true },
+          { hex: '#c8a96e', label: 'Dourado' },
+        ],
+        sizes: [
+          { s: 'P', status: 'ok' }, { s: 'M', status: 'ok' },
+          { s: 'G', status: 'ok' }, { s: 'GG', status: 'low' },
+        ],
+      },
+      {
+        cat: 'Cintos',
+        name: 'Cinto Country com Fivela',
+        desc: 'Couro Bovino Curtido · Fivela Inox Escovado · Largura 4cm',
+        price: 'R$ 149,90',
+        badge: '',
+        img: 'https://images.unsplash.com/photo-1585386959984-a4155224a1ad?w=120&q=70',
+        colors: [
+          { hex: '#8b5e3c', label: 'Marrom' },
+          { hex: '#1a1208', label: 'Preto' },
+          { hex: '#c8a96e', label: 'Caramelo' },
+        ],
+        sizes: [
+          { s: '80', status: 'ok' }, { s: '85', status: 'ok' },
+          { s: '90', status: 'ok' }, { s: '95', status: 'ok' },
+          { s: '100', status: 'low' }, { s: '105', status: 'ok' },
+          { s: '110', status: 'low' }, { s: '120', status: 'out' },
+        ],
+      },
+      {
+        cat: 'Cintos',
+        name: 'Cinto Country Fivela Dupla',
+        desc: 'Couro Curtido a Vegetal · Fivela Dourada · Bordado Lateral · Largura 5cm',
+        price: 'R$ 199,90',
+        badge: '',
+        img: 'https://images.unsplash.com/photo-1556306535-0f09a537f0a3?w=120&q=70',
+        colors: [
+          { hex: '#8b5e3c', label: 'Marrom Escuro' },
+          { hex: '#1a1208', label: 'Preto' },
+        ],
+        sizes: [
+          { s: '80', status: 'ok' }, { s: '90', status: 'ok' },
+          { s: '100', status: 'ok' }, { s: '110', status: 'low' },
+          { s: '120', status: 'out' },
+        ],
+      },
+      {
+        cat: 'Bonés',
+        name: 'Boné Country Bordado',
+        desc: 'Sarja 100% Algodão · Bordado Alto Relevo · Ajuste Snapback',
+        price: 'R$ 89,90',
+        badge: '',
+        img: 'https://images.unsplash.com/photo-1534215754734-18e55d13e346?w=120&q=70',
+        colors: [
+          { hex: '#1a1208', label: 'Preto' },
+          { hex: '#8b1a1a', label: 'Bordo' },
+          { hex: '#2b4d8c', label: 'Azul Marinho' },
+          { hex: '#c8a96e', label: 'Areia' },
+        ],
+        sizes: [{ s: 'Único', status: 'ok' }],
+      },
+    ],
+  },
+
+  feminino: {
+    label: 'Coleção Feminina',
+    page: 'feminino.html',
+    categories: ['Todos','Blusas','Vestidos','Calças','Botas','Chapéus','Acessórios'],
+    items: [
+      {
+        cat: 'Blusas',
+        name: 'Blusa Country Feminina',
+        desc: 'Viscose com Elastano · Toque Suave · Caimento Perfeito',
+        price: 'R$ 169,90',
+        badge: 'NOVO',
+        img: 'https://images.unsplash.com/photo-1516762689617-e1cffcef479d?w=120&q=70',
+        colors: [
+          { hex: '#8b5e3c', label: 'Terra' },
+          { hex: '#8b1a1a', label: 'Vinho' },
+          { hex: '#1a1208', label: 'Preto' },
+          { hex: '#fdfaf4', label: 'Off-White', border: true },
+        ],
+        sizes: [
+          { s: 'P', status: 'ok' }, { s: 'M', status: 'ok' },
+          { s: 'G', status: 'low' }, { s: 'GG', status: 'ok' },
+        ],
+      },
+      {
+        cat: 'Blusas',
+        name: 'Camisa Xadrez Feminina',
+        desc: '100% Algodão Flanela · Fit Slim · Amarração Frontal · Manga Longa',
+        price: 'R$ 179,90',
+        badge: '',
+        img: 'https://images.unsplash.com/photo-1578587018452-892bacefd3f2?w=120&q=70',
+        colors: [
+          { hex: '#b22222', label: 'Vermelho' },
+          { hex: '#2b4d8c', label: 'Azul Royal' },
+          { hex: '#1a6b4c', label: 'Verde Escuro' },
+        ],
+        sizes: [
+          { s: 'P', status: 'ok' }, { s: 'M', status: 'ok' },
+          { s: 'G', status: 'ok' }, { s: 'GG', status: 'low' },
+        ],
+      },
+      {
+        cat: 'Blusas',
+        name: 'Regata Country Feminina',
+        desc: 'Malha Dry Fit · Frente Estampada · Decote V · Ótima Respirabilidade',
+        price: 'R$ 99,90',
+        badge: 'OFERTA',
+        img: 'https://images.unsplash.com/photo-1564257577-c7efe9cfe651?w=120&q=70',
+        colors: [
+          { hex: '#fdfaf4', label: 'Branco', border: true },
+          { hex: '#8b1a1a', label: 'Vinho' },
+          { hex: '#1a6b4c', label: 'Verde' },
+          { hex: '#2b4d8c', label: 'Azul' },
+        ],
+        sizes: [
+          { s: 'P', status: 'ok' }, { s: 'M', status: 'ok' },
+          { s: 'G', status: 'ok' }, { s: 'GG', status: 'ok' },
+        ],
+      },
+      {
+        cat: 'Vestidos',
+        name: 'Vestido Country Renda',
+        desc: '100% Algodão Tricoline · Renda Artesanal · Caimento Fluido',
+        price: 'R$ 219,90',
+        badge: 'DESTAQUE',
+        img: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=120&q=70',
+        colors: [
+          { hex: '#fdfaf4', label: 'Branco', border: true },
+          { hex: '#8b1a1a', label: 'Vinho' },
+          { hex: '#1a6b4c', label: 'Verde' },
+        ],
+        sizes: [
+          { s: 'P', status: 'ok' }, { s: 'M', status: 'low' },
+          { s: 'G', status: 'ok' }, { s: 'GG', status: 'out' },
+        ],
+      },
+      {
+        cat: 'Vestidos',
+        name: 'Vestido Midi Country Estampado',
+        desc: 'Chiffon 100% Poliéster · Estampa Floral Exclusiva · Forro Cetim',
+        price: 'R$ 259,90',
+        badge: '',
+        img: 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=120&q=70',
+        colors: [
+          { hex: '#8b1a1a', label: 'Rosé' },
+          { hex: '#1a6b4c', label: 'Verde' },
+          { hex: '#2b4d8c', label: 'Azul' },
+        ],
+        sizes: [
+          { s: 'P', status: 'ok' }, { s: 'M', status: 'ok' },
+          { s: 'G', status: 'ok' }, { s: 'GG', status: 'low' },
+        ],
+      },
+      {
+        cat: 'Calças',
+        name: 'Calça Flare Country Feminina',
+        desc: 'Denim Stretch 2% Elastano · Cintura Alta · Lavagem Estonada',
+        price: 'R$ 239,90',
+        badge: '',
+        img: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=120&q=70',
+        colors: [
+          { hex: '#1e3a6b', label: 'Azul Escuro' },
+          { hex: '#6b9fcc', label: 'Azul Claro' },
+          { hex: '#1a1208', label: 'Preto' },
+        ],
+        sizes: [
+          { s: '36', status: 'ok' }, { s: '38', status: 'ok' },
+          { s: '40', status: 'ok' }, { s: '42', status: 'low' },
+          { s: '44', status: 'ok' }, { s: '46', status: 'out' },
+        ],
+      },
+      {
+        cat: 'Calças',
+        name: 'Calça Skinny Feminina Country',
+        desc: 'Denim Power Stretch · Modelagem Cós Alto · Bolso Bordado',
+        price: 'R$ 219,90',
+        badge: '',
+        img: 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=120&q=70',
+        colors: [
+          { hex: '#1e3a6b', label: 'Índigo' },
+          { hex: '#1a1208', label: 'Preto' },
+          { hex: '#8b1a1a', label: 'Bordo' },
+        ],
+        sizes: [
+          { s: '34', status: 'ok' }, { s: '36', status: 'ok' },
+          { s: '38', status: 'ok' }, { s: '40', status: 'ok' },
+          { s: '42', status: 'low' }, { s: '44', status: 'low' },
+          { s: '46', status: 'out' },
+        ],
+      },
+      {
+        cat: 'Botas',
+        name: 'Bota Country Feminina Cano Médio',
+        desc: 'Couro Nobuck · Solado Plataforma 4cm · Forro Acolchoado',
+        price: 'R$ 349,90',
+        badge: '',
+        img: 'https://images.unsplash.com/photo-1520639888713-7851133b1ed0?w=120&q=70',
+        colors: [
+          { hex: '#8b5e3c', label: 'Caramelo' },
+          { hex: '#1a1208', label: 'Preto' },
+          { hex: '#8b1a1a', label: 'Vinho' },
+        ],
+        sizes: [
+          { s: '33', status: 'ok' }, { s: '34', status: 'ok' },
+          { s: '35', status: 'ok' }, { s: '36', status: 'ok' },
+          { s: '37', status: 'low' }, { s: '38', status: 'ok' },
+          { s: '39', status: 'low' }, { s: '40', status: 'out' },
+        ],
+      },
+      {
+        cat: 'Botas',
+        name: 'Bota Country Bordada Cano Longo',
+        desc: 'Couro Legítimo · Bordado Floral Manual · Sola Antiderrapante',
+        price: 'R$ 429,90',
+        badge: 'NOVO',
+        img: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=120&q=70',
+        colors: [
+          { hex: '#8b5e3c', label: 'Caramelo' },
+          { hex: '#c8a96e', label: 'Dourado' },
+        ],
+        sizes: [
+          { s: '33', status: 'ok' }, { s: '34', status: 'ok' },
+          { s: '35', status: 'ok' }, { s: '36', status: 'low' },
+          { s: '37', status: 'low' }, { s: '38', status: 'out' },
+          { s: '39', status: 'out' }, { s: '40', status: 'out' },
+        ],
+      },
+      {
+        cat: 'Chapéus',
+        name: 'Chapéu Country Feminino Aba Larga',
+        desc: 'Palha Natural / Couro · Banda de Fita · Aba Larga 8cm · UV50+',
+        price: 'R$ 229,90',
+        badge: '',
+        img: 'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=120&q=70',
+        colors: [
+          { hex: '#f5f0e8', label: 'Palha', border: true },
+          { hex: '#8b1a1a', label: 'Vinho' },
+          { hex: '#8b5e3c', label: 'Marrom' },
+        ],
+        sizes: [
+          { s: 'P', status: 'ok' }, { s: 'M', status: 'ok' },
+          { s: 'G', status: 'low' }, { s: 'GG', status: 'out' },
+        ],
+      },
+      {
+        cat: 'Acessórios',
+        name: 'Cinto Country Feminino Bordado',
+        desc: 'Couro Fino com Bordado · Fivela Rosé Gold · Largura 3cm',
+        price: 'R$ 129,90',
+        badge: '',
+        img: 'https://images.unsplash.com/photo-1585386959984-a4155224a1ad?w=120&q=70',
+        colors: [
+          { hex: '#c8a96e', label: 'Dourado' },
+          { hex: '#8b1a1a', label: 'Vinho' },
+          { hex: '#1a1208', label: 'Preto' },
+        ],
+        sizes: [
+          { s: 'P', status: 'ok' }, { s: 'M', status: 'ok' },
+          { s: 'G', status: 'low' },
+        ],
+      },
+      {
+        cat: 'Acessórios',
+        name: 'Boné Country Feminino Bordado',
+        desc: 'Sarja Premium · Bordado Floral · Ajuste Velcro Traseiro',
+        price: 'R$ 79,90',
+        badge: '',
+        img: 'https://images.unsplash.com/photo-1534215754734-18e55d13e346?w=120&q=70',
+        colors: [
+          { hex: '#8b1a1a', label: 'Vinho' },
+          { hex: '#1a1208', label: 'Preto' },
+          { hex: '#fdfaf4', label: 'Branco', border: true },
+        ],
+        sizes: [{ s: 'Único', status: 'ok' }],
+      },
+    ],
+  },
+
+  infantil: {
+    label: 'Coleção Infantil',
+    page: 'infantil.html',
+    categories: ['Todos','Camisas','Calças','Botas','Chapéus','Acessórios'],
+    items: [
+      {
+        cat: 'Camisas',
+        name: 'Camiseta Country Infantil',
+        desc: '100% Algodão Macio · Meia Malha · Hipoalergênico · 4–12 anos',
+        price: 'R$ 89,90',
+        badge: 'NOVO',
+        img: 'https://images.unsplash.com/photo-1519457431-44ccd64a579b?w=120&q=70',
+        colors: [
+          { hex: '#8b5e3c', label: 'Terra' },
+          { hex: '#8b1a1a', label: 'Vinho' },
+          { hex: '#1a1208', label: 'Preto' },
+          { hex: '#fdfaf4', label: 'Branco', border: true },
+        ],
+        sizes: [
+          { s: '4', status: 'ok' }, { s: '6', status: 'ok' },
+          { s: '8', status: 'ok' }, { s: '10', status: 'low' },
+          { s: '12', status: 'ok' },
+        ],
+      },
+      {
+        cat: 'Camisas',
+        name: 'Camisa Xadrez Infantil',
+        desc: 'Flanela 100% Algodão · Tecido Extra Macio · Botões Resistentes · 4–12 anos',
+        price: 'R$ 109,90',
+        badge: '',
+        img: 'https://images.unsplash.com/photo-1622290291468-a28f7a7dc6a8?w=120&q=70',
+        colors: [
+          { hex: '#8b5e3c', label: 'Marrom' },
+          { hex: '#8b1a1a', label: 'Vermelho' },
+          { hex: '#2b4d8c', label: 'Azul' },
+        ],
+        sizes: [
+          { s: '4', status: 'ok' }, { s: '6', status: 'ok' },
+          { s: '8', status: 'ok' }, { s: '10', status: 'ok' },
+          { s: '12', status: 'low' },
+        ],
+      },
+      {
+        cat: 'Camisas',
+        name: 'Camisa Country Teen Bordada',
+        desc: '100% Algodão Penteado · Bordado Frontal · Manga Longa · 10–16 anos',
+        price: 'R$ 139,90',
+        badge: 'DESTAQUE',
+        img: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=120&q=70',
+        colors: [
+          { hex: '#1e3a6b', label: 'Azul Escuro' },
+          { hex: '#1a1208', label: 'Preto' },
+          { hex: '#8b1a1a', label: 'Bordo' },
+        ],
+        sizes: [
+          { s: '10', status: 'ok' }, { s: '12', status: 'ok' },
+          { s: '14', status: 'low' }, { s: '16', status: 'out' },
+        ],
+      },
+      {
+        cat: 'Camisas',
+        name: 'Body Country Bebê',
+        desc: '100% Algodão Orgânico · Hipoalergênico · Botões de Pressão · RN–24m',
+        price: 'R$ 69,90',
+        badge: '',
+        img: 'https://images.unsplash.com/photo-1596870230751-ebdfce98ec42?w=120&q=70',
+        colors: [
+          { hex: '#fdfaf4', label: 'Branco', border: true },
+          { hex: '#8b5e3c', label: 'Caramelo' },
+          { hex: '#8b1a1a', label: 'Rosa Antigo' },
+        ],
+        sizes: [
+          { s: 'RN', status: 'ok' }, { s: 'P', status: 'ok' },
+          { s: 'M', status: 'ok' }, { s: 'G', status: 'low' },
+        ],
+      },
+      {
+        cat: 'Calças',
+        name: 'Calça Jeans Infantil Country',
+        desc: 'Denim 100% Algodão · Elástico Regulável na Cintura · Reforço nos Joelhos',
+        price: 'R$ 129,90',
+        badge: '',
+        img: 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=120&q=70',
+        colors: [
+          { hex: '#1e3a6b', label: 'Azul Stone' },
+          { hex: '#6b9fcc', label: 'Azul Claro' },
+          { hex: '#1a1208', label: 'Preto' },
+        ],
+        sizes: [
+          { s: '4', status: 'ok' }, { s: '6', status: 'ok' },
+          { s: '8', status: 'ok' }, { s: '10', status: 'low' },
+          { s: '12', status: 'out' }, { s: '14', status: 'out' },
+        ],
+      },
+      {
+        cat: 'Calças',
+        name: 'Calça Teen Cargo Country',
+        desc: 'Canvas 100% Algodão · Bolsos Laterais · Regulagem na Cintura · 10–16 anos',
+        price: 'R$ 159,90',
+        badge: '',
+        img: 'https://images.unsplash.com/photo-1603487742131-4160ec999306?w=120&q=70',
+        colors: [
+          { hex: '#4a4a3a', label: 'Cáqui' },
+          { hex: '#1e3a6b', label: 'Azul' },
+          { hex: '#1a1208', label: 'Preto' },
+        ],
+        sizes: [
+          { s: '10', status: 'ok' }, { s: '12', status: 'ok' },
+          { s: '14', status: 'low' }, { s: '16', status: 'low' },
+        ],
+      },
+      {
+        cat: 'Calças',
+        name: 'Calça Country Bebê',
+        desc: 'Denim Leve · Elastano · Sem Botões Internos · Cintura Elástica Total · RN–24m',
+        price: 'R$ 79,90',
+        badge: '',
+        img: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=120&q=70',
+        colors: [
+          { hex: '#1e3a6b', label: 'Azul' },
+          { hex: '#6b9fcc', label: 'Azul Claro' },
+        ],
+        sizes: [
+          { s: 'RN', status: 'ok' }, { s: 'P', status: 'ok' },
+          { s: 'M', status: 'ok' }, { s: 'G', status: 'low' },
+          { s: '24m', status: 'low' },
+        ],
+      },
+      {
+        cat: 'Botas',
+        name: 'Bota Country Infantil',
+        desc: 'Couro Sintético Premium · Solado Antiderrapante · Zíper Lateral · 3–8 anos',
+        price: 'R$ 199,90',
+        badge: '',
+        img: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=120&q=70',
+        colors: [
+          { hex: '#8b5e3c', label: 'Marrom' },
+          { hex: '#1a1208', label: 'Preto' },
+          { hex: '#c8a96e', label: 'Caramelo' },
+        ],
+        sizes: [
+          { s: '25', status: 'ok' }, { s: '26', status: 'ok' },
+          { s: '27', status: 'ok' }, { s: '28', status: 'ok' },
+          { s: '29', status: 'low' }, { s: '30', status: 'ok' },
+          { s: '31', status: 'low' }, { s: '32', status: 'out' },
+          { s: '33', status: 'out' },
+        ],
+      },
+      {
+        cat: 'Botas',
+        name: 'Bota Country Teen Couro',
+        desc: 'Couro Legítimo · Solado TPU · Forro Acolchoado · Zíper Lateral · 9–14 anos',
+        price: 'R$ 279,90',
+        badge: 'NOVO',
+        img: 'https://images.unsplash.com/photo-1520639888713-7851133b1ed0?w=120&q=70',
+        colors: [
+          { hex: '#8b5e3c', label: 'Marrom' },
+          { hex: '#1a1208', label: 'Preto' },
+        ],
+        sizes: [
+          { s: '33', status: 'ok' }, { s: '34', status: 'ok' },
+          { s: '35', status: 'ok' }, { s: '36', status: 'low' },
+          { s: '37', status: 'low' }, { s: '38', status: 'out' },
+        ],
+      },
+      {
+        cat: 'Chapéus',
+        name: 'Chapéu Country Infantil',
+        desc: 'Palha Natural Macia · Aba Média · Banda Colorida · UV50+ · 2–12 anos',
+        price: 'R$ 79,90',
+        badge: '',
+        img: 'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=120&q=70',
+        colors: [
+          { hex: '#f5f0e8', label: 'Palha', border: true },
+          { hex: '#8b5e3c', label: 'Marrom' },
+          { hex: '#8b1a1a', label: 'Vinho' },
+        ],
+        sizes: [
+          { s: 'P (2–6)', status: 'ok' },
+          { s: 'M (6–12)', status: 'low' },
+        ],
+      },
+      {
+        cat: 'Acessórios',
+        name: 'Boné Country Infantil Bordado',
+        desc: 'Sarja 100% Algodão · Bordado Divertido · Regulagem Velcro · 2–12 anos',
+        price: 'R$ 59,90',
+        badge: '',
+        img: 'https://images.unsplash.com/photo-1534215754734-18e55d13e346?w=120&q=70',
+        colors: [
+          { hex: '#1a1208', label: 'Preto' },
+          { hex: '#8b1a1a', label: 'Vermelho' },
+          { hex: '#2b4d8c', label: 'Azul' },
+        ],
+        sizes: [
+          { s: 'P (2–6)', status: 'ok' },
+          { s: 'M (6–12)', status: 'ok' },
+        ],
+      },
+      {
+        cat: 'Acessórios',
+        name: 'Cinto Country Infantil com Fivela',
+        desc: 'Couro Sintético · Fivela Metálica · Regulagem de Tamanho · 2–14 anos',
+        price: 'R$ 49,90',
+        badge: 'OFERTA',
+        img: 'https://images.unsplash.com/photo-1556306535-0f09a537f0a3?w=120&q=70',
+        colors: [
+          { hex: '#8b5e3c', label: 'Marrom' },
+          { hex: '#1a1208', label: 'Preto' },
+          { hex: '#c8a96e', label: 'Caramelo' },
+        ],
+        sizes: [
+          { s: 'P', status: 'ok' },
+          { s: 'M', status: 'ok' },
+        ],
+      },
+    ],
+  },
+};
+
+// ── Helpers ────────────────────────────────────────
+function statusLabel(s) {
+  if (s === 'low') return '⚠ últimas';
+  if (s === 'out') return '✕ esgotado';
+  return '';
+}
+
+function buildDrawerItem(item) {
+  const colorsHtml = item.colors.map(c =>
+    `<span class="stock-color-chip" title="${c.label}"
+       style="background:${c.hex};${c.border ? 'border-color:#ccc;' : ''}"></span>`
+  ).join('');
+
+  const sizesHtml = item.sizes.map(sz => {
+    const cls = sz.status === 'low' ? 'low' : sz.status === 'out' ? 'out' : '';
+    const extra = statusLabel(sz.status) ? ` title="${statusLabel(sz.status)}"` : '';
+    return `<span class="stock-size-badge ${cls}"${extra}>${sz.s}</span>`;
+  }).join('');
+
+  const badge = item.badge
+    ? `<span class="stock-badge">${item.badge}</span>`
+    : '';
+
+  return `
+    <div class="stock-item" data-cat="${item.cat}">
+      <img class="stock-thumb" src="${item.img}" alt="${item.name}"
+           onerror="this.style.background='#f5f0e8'" loading="lazy" />
+      <div class="stock-body">
+        <p class="stock-category">${item.cat}</p>
+        <p class="stock-name">${item.name}${badge}</p>
+        <p class="stock-desc">${item.desc}</p>
+        <div class="stock-row">
+          <span class="stock-label">Cores:</span>
+          <div class="stock-colors">${colorsHtml}</div>
+        </div>
+        <div class="stock-row">
+          <span class="stock-label">Tam.:</span>
+          <div class="stock-sizes">${sizesHtml}</div>
+        </div>
+        <p class="stock-price">${item.price}</p>
+      </div>
+    </div>`;
+}
+
+// ── Drawer state ───────────────────────────────────
+const drawer     = document.getElementById('stockDrawer');
+const backdrop   = document.getElementById('drawerBackdrop');
+const drawerTitle   = document.getElementById('drawerTitle');
+const drawerPageLink = document.getElementById('drawerPageLink');
+const drawerFilters = document.getElementById('drawerFilters');
+const drawerList    = document.getElementById('drawerList');
+const drawerClose   = document.getElementById('drawerClose');
+let currentCollection = null;
+let currentCat = 'Todos';
+
+function openDrawer(collectionKey) {
+  const col = STOCK[collectionKey];
+  if (!col) return;
+  currentCollection = collectionKey;
+  currentCat = 'Todos';
+
+  // Header
+  drawerTitle.textContent = col.label;
+  drawerPageLink.href = col.page;
+
+  // Filter pills
+  drawerFilters.innerHTML = col.categories.map(cat =>
+    `<button class="drawer-filter-pill${cat === 'Todos' ? ' active' : ''}"
+       data-cat="${cat}">${cat}</button>`
+  ).join('');
+
+  // Stock list
+  drawerList.innerHTML = col.items.map(buildDrawerItem).join('');
+
+  // Open
+  drawer.classList.add('open');
+  drawer.setAttribute('aria-hidden', 'false');
+  backdrop.classList.add('visible');
+  document.body.style.overflow = 'hidden';
+
+  // Pill listeners
+  drawerFilters.querySelectorAll('.drawer-filter-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      drawerFilters.querySelectorAll('.drawer-filter-pill').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      currentCat = pill.dataset.cat;
+      filterDrawerItems(currentCat);
+    });
+  });
+
+  // Scroll drawer to top
+  drawerList.scrollTop = 0;
+}
+
+function filterDrawerItems(cat) {
+  drawerList.querySelectorAll('.stock-item').forEach(item => {
+    item.style.display = (cat === 'Todos' || item.dataset.cat === cat) ? '' : 'none';
+  });
+  // Empty state
+  const anyVisible = [...drawerList.querySelectorAll('.stock-item')]
+    .some(el => el.style.display !== 'none');
+  const empty = drawerList.querySelector('.drawer-empty');
+  if (!anyVisible) {
+    if (!empty) {
+      drawerList.insertAdjacentHTML('beforeend',
+        `<div class="drawer-empty">
+           <div class="empty-icon">🔍</div>
+           <p>Nenhum produto encontrado nesta categoria.</p>
+         </div>`);
+    }
+  } else if (empty) {
+    empty.remove();
+  }
+}
+
+function closeDrawer() {
+  drawer.classList.remove('open');
+  drawer.setAttribute('aria-hidden', 'true');
+  backdrop.classList.remove('visible');
+  document.body.style.overflow = '';
+}
+
+// ── Bind collection cards ──────────────────────────
+document.querySelectorAll('.collection-card[data-collection]').forEach(card => {
+  card.addEventListener('click', () => openDrawer(card.dataset.collection));
+});
+
+// ── Close triggers ─────────────────────────────────
+drawerClose.addEventListener('click', closeDrawer);
+backdrop.addEventListener('click', closeDrawer);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
 </script>
 </body>
 </html>
