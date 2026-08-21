@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>La Bella Italia – Restaurante Italiano</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Jost:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo"><em>La</em> <span>Bella Italia</span></div>
+    <ul class="nav-links">
+      <li><a href="#cardapio">Cardápio</a></li>
+      <li><a href="#sobre">Nossa História</a></li>
+      <li><a href="#reserva">Reservas</a></li>
+      <li><a href="#contato">Contato</a></li>
+    </ul>
+    <a href="#reserva" class="btn-primary" style="font-size:0.72rem; padding:12px 24px;">Reservar Mesa</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-text">
+      <div class="badge">Autêntica Cozinha Italiana</div>
+      <h1>Sabores da<br/><em>Bella Italia</em></h1>
+      <p class="hero-sub">
+        Receitas tradicionais transmitidas por gerações, preparadas com ingredientes frescos e muito amore desde 1987.
+      </p>
+      <div class="hero-cta">
+        <a href="#cardapio" class="btn-primary">Ver Cardápio</a>
+        <a href="#sobre" class="btn-ghost">Nossa História</a>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <span class="stat-num">37+</span>
+          <span class="stat-label">Anos de história</span>
+        </div>
+        <div>
+          <span class="stat-num">120+</span>
+          <span class="stat-label">Pratos no cardápio</span>
+        </div>
+        <div>
+          <span class="stat-num">4.9★</span>
+          <span class="stat-label">Avaliação média</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="hero-plate">🍝</div>
+    </div>
+  </section>
+
+  <!-- INTRO CARDÁPIO -->
+  <div class="section-intro reveal" id="cardapio">
+    <h2>Nossos Pratos <em>Especiais</em></h2>
+    <p>Cada prato é uma viagem à Itália. Selecionamos quatro clássicos que traduzem a alma da cozinha italiana em cada garfada.</p>
+    <div class="divider"></div>
+  </div>
+
+  <!-- CARDÁPIO -->
+  <section class="menu">
+
+    <!-- Card 1: Tagliatelle al Ragù -->
+    <article class="card reveal">
+      <div class="card-emoji-wrap">
+        <div class="card-emoji">🍝</div>
+        <span class="card-tag">Massa</span>
+      </div>
+      <div class="card-body">
+        <div class="card-number">01 / 04</div>
+        <h3 class="card-title">Tagliatelle<br/><em>al Ragù</em></h3>
+        <p class="card-desc">
+          Massa fresca artesanal de ovos, levemente porosa para abraçar cada colher do ragù. O molho é preparado lentamente por 4 horas com carne bovina, pancetta, vinho tinto Chianti e toque de noz-moscada — encorpado, profundo e reconfortante.
+        </p>
+        <div class="card-footer">
+          <span class="card-price">R$ 62</span>
+          <button class="card-btn">Pedir agora</button>
+        </div>
+      </div>
+    </article>
+
+    <!-- Card 2: Cornetto alla Mandorla -->
+    <article class="card reveal">
+      <div class="card-emoji-wrap">
+        <div class="card-emoji">🥐</div>
+        <span class="card-tag">Padaria</span>
+      </div>
+      <div class="card-body">
+        <div class="card-number">02 / 04</div>
+        <h3 class="card-title">Cornetto<br/><em>alla Mandorla</em></h3>
+        <p class="card-desc">
+          O croissant italiano — mais macio e adocicado que o francês — é feito com manteiga europeia e massa fermentada por 24 horas. Recheado com creme de amêndoas tostadas e coberto com açúcar de confeiteiro. Crocante por fora, macio por dentro, irresistível.
+        </p>
+        <div class="card-footer">
+          <span class="card-price">R$ 18</span>
+          <button class="card-btn">Pedir agora</button>
+        </div>
+      </div>
+    </article>
+
+    <!-- Card 3: Risotto ai Funghi -->
+    <article class="card reveal">
+      <div class="card-emoji-wrap">
+        <div class="card-emoji">🍚</div>
+        <span class="card-tag">Risotto</span>
+      </div>
+      <div class="card-body">
+        <div class="card-number">03 / 04</div>
+        <h3 class="card-title">Risotto<br/><em>ai Funghi</em></h3>
+        <p class="card-desc">
+          Arroz Arborio cremoso, mexido à mão durante 20 minutos com caldo de legumes caseiro, vinho branco seco e mix de cogumelos Porcini, Shiitake e Paris. Finalizado com manteiga gelada e Parmigiano Reggiano 24 meses, resulta em uma textura sedosa e sabor terroso inconfundível.
+        </p>
+        <div class="card-footer">
+          <span class="card-price">R$ 74</span>
+          <button class="card-btn">Pedir agora</button>
+        </div>
+      </div>
+    </article>
+
+    <!-- Card 4: Pizza Margherita -->
+    <article class="card reveal">
+      <div class="card-emoji-wrap">
+        <div class="card-emoji">🍕</div>
+        <span class="card-tag">Pizza</span>
+      </div>
+      <div class="card-body">
+        <div class="card-number">04 / 04</div>
+        <h3 class="card-title">Pizza<br/><em>Margherita</em></h3>
+        <p class="card-desc">
+          A rainha das pizzas napolitanas. Massa fermentada 48 horas em forno a lenha a 450°C por 90 segundos — borda alta, manchada, levemente crocante. Coberta com San Marzano DOP, Fior di Latte e folhas frescas de manjericão. Simples. Perfeita.
+        </p>
+        <div class="card-footer">
+          <span class="card-price">R$ 55</span>
+          <button class="card-btn">Pedir agora</button>
+        </div>
+      </div>
+    </article>
+
+  </section>
+
+  <!-- SOBRE -->
+  <section class="sobre reveal" id="sobre">
+    <div class="sobre-text">
+      <h2>Uma história feita<br/>com <em>paixão e farinha</em></h2>
+      <p>Em 1987, a família Conti chegou ao Brasil trazendo nas malas receitas centenárias de Bolonha e Nápoles. O que começou como um pequeníssimo cantinho de bairro tornou-se um dos destinos gastronômicos mais queridos da cidade.</p>
+      <p>Aqui, a tradição é preservada sem abrir mão da criatividade. Cada ingrediente é escolhido com cuidado, importado diretamente da Itália ou cultivado por produtores locais parceiros.</p>
+      <div class="sobre-features">
+        <div class="feature">
+          <div class="feature-icon">🌿</div>
+          <div class="feature-title">Ingredientes frescos</div>
+          <div class="feature-desc">Selecionados diariamente nos melhores mercados</div>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">🔥</div>
+          <div class="feature-title">Forno a lenha</div>
+          <div class="feature-desc">Pizzas assadas na tradição napolitana</div>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">🍷</div>
+          <div class="feature-title">Vinhos importados</div>
+          <div class="feature-desc">Seleção de vinhos das melhores regiões italianas</div>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">👨‍🍳</div>
+          <div class="feature-title">Chefs especializados</div>
+          <div class="feature-desc">Formados em escolas de culinária na Itália</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sobre-visual">
+      <div class="sobre-box">
+        <div class="sobre-box-icon">🏆</div>
+        <div class="sobre-box-num">12</div>
+        <div class="sobre-box-label">Prêmios gastronômicos</div>
+      </div>
+      <div class="sobre-box">
+        <div class="sobre-box-icon">🍽️</div>
+        <div class="sobre-box-num">50k+</div>
+        <div class="sobre-box-label">Refeições servidas/ano</div>
+      </div>
+      <div class="sobre-box">
+        <div class="sobre-box-icon">🧑‍🤝‍🧑</div>
+        <div class="sobre-box-num">98%</div>
+        <div class="sobre-box-label">Clientes satisfeitos</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer id="contato">
+    <div class="footer-logo"><em>La</em> <span>Bella Italia</span></div>
+    <span class="footer-copy">© 2025 La Bella Italia · Todos os direitos reservados</span>
+    <div class="footer-socials">
+      <button class="social-pill" title="Instagram">📸</button>
+      <button class="social-pill" title="WhatsApp">💬</button>
+      <button class="social-pill" title="Facebook">👍</button>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+
+</body>
+</html>

@@ -1435,6 +1435,7 @@ document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 // ══════════════════════════════════════════════════
 
 // ── Base de dados de estoque ───────────────────────
+// STOCK_DATA_START
 const STOCK = {
   masculino: {
     label: 'Coleção Masculina',
@@ -2372,6 +2373,7 @@ const STOCK = {
     ],
   },
 };
+// STOCK_DATA_END
 
 // ── Helpers ────────────────────────────────────────
 function statusLabel(s) {
@@ -2380,7 +2382,7 @@ function statusLabel(s) {
   return '';
 }
 
-function buildDrawerItem(item) {
+function buildDrawerItem(item, colKey, idx) {
   const uid = 'si_' + Math.random().toString(36).slice(2,8);
   const badge = item.badge ? `<span class="stock-badge">${item.badge}</span>` : '';
 
@@ -2418,7 +2420,8 @@ function buildDrawerItem(item) {
 
   return `
     <div class="stock-item" id="${uid}" data-cat="${item.cat}"
-         data-name="${item.name}" data-price="${item.price || ''}">
+         data-name="${item.name}" data-price="${item.price || ''}"
+         data-col="${colKey}" data-idx="${idx}">
       <div class="stock-img-wrap">
         <div class="stock-slide-track">${slidesHtml}</div>
         ${arrowsHtml}
@@ -2467,7 +2470,7 @@ function openDrawer(collectionKey) {
   ).join('');
 
   // Stock list
-  drawerList.innerHTML = col.items.map(buildDrawerItem).join('');
+  drawerList.innerHTML = col.items.map((item, idx) => buildDrawerItem(item, collectionKey, idx)).join('');
 
   // Open
   drawer.classList.add('open');
@@ -2491,29 +2494,32 @@ function openDrawer(collectionKey) {
   setTimeout(initCardSliders, 60);
 }
 
-function initCardSliders() {
-  drawerList.querySelectorAll('.stock-img-wrap').forEach(wrap => {
-    const track = wrap.querySelector('.stock-slide-track');
-    if (!track) return;
-    const imgs = track.querySelectorAll('img');
-    if (imgs.length < 2) return;
+function initSingleCardSlider(wrap) {
+  const track = wrap.querySelector('.stock-slide-track');
+  if (!track) return;
+  const imgs = track.querySelectorAll('img');
+  if (imgs.length < 2) return;
+  if (wrap.dataset.sliderInit === '1') return;
+  wrap.dataset.sliderInit = '1';
 
-    let cur = 0;
-    const total = imgs.length;
+  let cur = 0;
+  const total = imgs.length;
 
-    function slideTo(idx) {
-      cur = (idx + total) % total;
-      track.style.transform = `translateX(-${cur * 100}%)`;
-      dots.forEach((d, i) => d.classList.toggle('active', i === cur));
-    }
+  function slideTo(idx) {
+    cur = (idx + total) % total;
+    track.style.transform = `translateX(-${cur * 100}%)`;
+  }
 
-    wrap.querySelectorAll('.stock-slide-btn').forEach(btn => {
-      btn.addEventListener('click', e => {
-        e.stopPropagation();
-        slideTo(cur + parseInt(btn.dataset.sdir));
-      });
+  wrap.querySelectorAll('.stock-slide-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      slideTo(cur + parseInt(btn.dataset.sdir));
     });
   });
+}
+
+function initCardSliders() {
+  drawerList.querySelectorAll('.stock-img-wrap').forEach(initSingleCardSlider);
 }
 
 function filterDrawerItems(cat) {
@@ -4165,6 +4171,232 @@ drawerList.addEventListener('scroll', updateDrawerNav);
 
 backdrop.addEventListener('click', closeDrawer);
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
+
+// ══════════════════════════════════════════════════
+// ── MODO DE EDIÇÃO (textos e fotos) ───────────────
+// ══════════════════════════════════════════════════
+(function () {
+  const EDIT_TEXT_SELECTOR = [
+    'h1', 'h2', 'h3',
+    '.hero-eyebrow span', '.brand-tagline',
+    '.collection-tag', '.collection-cta',
+    '.stock-name', '.stock-desc', '.stock-price',
+    'section#sobre p', 'footer p'
+  ].join(', ');
+
+  // ── UI: botão flutuante + barra de edição ─────────
+  const editStyle = document.createElement('style');
+  editStyle.textContent = `
+    #editToggleBtn {
+      position: fixed; bottom: 20px; right: 20px; z-index: 500;
+      background: #1a1208; color: #fdfaf4; border: none;
+      padding: 12px 18px; border-radius: 30px; font-size: .85rem;
+      font-weight: 600; letter-spacing: .04em; cursor: pointer;
+      box-shadow: 0 4px 18px rgba(0,0,0,.35); display: flex; align-items: center; gap: 8px;
+      font-family: 'Source Sans 3', sans-serif;
+    }
+    #editToggleBtn:hover { background: #b22222; }
+    #editSaveBtn {
+      position: fixed; bottom: 20px; right: 210px; z-index: 500;
+      background: #c8a96e; color: #1a1208; border: none;
+      padding: 12px 18px; border-radius: 30px; font-size: .85rem;
+      font-weight: 700; letter-spacing: .04em; cursor: pointer;
+      box-shadow: 0 4px 18px rgba(0,0,0,.35); display: none; align-items: center; gap: 8px;
+      font-family: 'Source Sans 3', sans-serif;
+    }
+    #editSaveBtn.show { display: flex; }
+    body.edit-mode [data-editable="1"] {
+      outline: 1.5px dashed #c8a96e; outline-offset: 2px; cursor: text; border-radius: 3px;
+    }
+    body.edit-mode [data-editable="1"]:hover { outline-color: #b22222; background: rgba(178,34,34,.06); }
+    body.edit-mode [data-editable="1"]:focus { outline: 2px solid #b22222; background: rgba(178,34,34,.1); }
+    body.edit-mode img, body.edit-mode [data-img-editable="1"] {
+      cursor: pointer; position: relative;
+    }
+    body.edit-mode img:hover, body.edit-mode [data-img-editable="1"]:hover {
+      outline: 3px solid #b22222; outline-offset: -3px;
+    }
+    .edit-img-hint {
+      position: absolute; inset: 0; display: none; align-items: center; justify-content: center;
+      background: rgba(26,18,8,.55); color: #fdfaf4; font-size: 1.6rem; pointer-events: none;
+      border-radius: inherit; z-index: 2;
+    }
+    body.edit-mode [data-img-editable="1"]:hover > .edit-img-hint,
+    body.edit-mode .edit-img-wrap:hover .edit-img-hint { display: flex; }
+    #editBanner {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 499;
+      background: #b22222; color: #fdfaf4; text-align: center;
+      font-size: .8rem; font-weight: 600; padding: 6px; display: none;
+      font-family: 'Source Sans 3', sans-serif;
+    }
+    body.edit-mode #editBanner { display: block; }
+  `;
+  document.head.appendChild(editStyle);
+
+  const banner = document.createElement('div');
+  banner.id = 'editBanner';
+  banner.textContent = 'MODO DE EDIÇÃO — clique nos textos para editar, clique nas fotos para trocar';
+  document.body.appendChild(banner);
+
+  const toggleBtn = document.createElement('button');
+  toggleBtn.id = 'editToggleBtn';
+  toggleBtn.innerHTML = '✏️ Editar site';
+  document.body.appendChild(toggleBtn);
+
+  const saveBtn = document.createElement('button');
+  saveBtn.id = 'editSaveBtn';
+  saveBtn.innerHTML = '⬇ Baixar site editado';
+  document.body.appendChild(saveBtn);
+
+  const fileInput = document.createElement('input');
+  fileInput.type = 'file';
+  fileInput.accept = 'image/*';
+  fileInput.style.display = 'none';
+  document.body.appendChild(fileInput);
+
+  let editing = false;
+  let currentImgTarget = null;
+
+  function markTextEditable(on) {
+    document.querySelectorAll(EDIT_TEXT_SELECTOR).forEach(el => {
+      if (el.closest('#editBanner, #editToggleBtn, #editSaveBtn')) return;
+      if (on) {
+        el.setAttribute('contenteditable', 'true');
+        el.setAttribute('data-editable', '1');
+      } else {
+        el.removeAttribute('contenteditable');
+        el.removeAttribute('data-editable');
+      }
+    });
+  }
+
+  function ensureImgHints() {
+    // Para <img>, o hover funciona no próprio elemento (não precisa wrapper).
+    // Para divs com background-image, adicionamos um ícone de sobreposição.
+    document.querySelectorAll('[style*="background-image"]').forEach(el => {
+      if (el.querySelector(':scope > .edit-img-hint')) return;
+      if (getComputedStyle(el).position === 'static') el.style.position = 'relative';
+      const hint = document.createElement('span');
+      hint.className = 'edit-img-hint';
+      hint.textContent = '📷';
+      el.appendChild(hint);
+      el.setAttribute('data-img-editable', '1');
+    });
+  }
+
+  toggleBtn.addEventListener('click', () => {
+    editing = !editing;
+    document.body.classList.toggle('edit-mode', editing);
+    toggleBtn.innerHTML = editing ? '✕ Sair da edição' : '✏️ Editar site';
+    saveBtn.classList.toggle('show', editing);
+    markTextEditable(editing);
+    if (editing) ensureImgHints();
+  });
+
+  // ── Sincroniza textos dos itens de estoque de volta para STOCK[] ──
+  document.addEventListener('blur', e => {
+    if (!editing) return;
+    const el = e.target;
+    if (!el.dataset || el.dataset.editable !== '1') return;
+    const item = el.closest('.stock-item');
+    if (!item) return;
+    const col = item.dataset.col, idx = item.dataset.idx;
+    if (col == null || idx == null || !STOCK[col]) return;
+    const obj = STOCK[col].items[idx];
+    if (!obj) return;
+    if (el.classList.contains('stock-name')) {
+      const m = obj.name.match(/^Ref \d+ — /);
+      obj.name = (m ? m[0] : '') + el.textContent.trim();
+    } else if (el.classList.contains('stock-desc')) {
+      obj.desc = el.textContent.trim();
+    } else if (el.classList.contains('stock-price')) {
+      obj.price = el.textContent.trim();
+    }
+  }, true);
+
+  // ── Troca de fotos (img e backgrounds) ────────────
+  document.addEventListener('click', e => {
+    if (!editing) return;
+    let target = e.target.closest('img');
+    if (!target) target = e.target.closest('[data-img-editable="1"]');
+    if (!target) return;
+    e.preventDefault();
+    e.stopPropagation();
+    currentImgTarget = target;
+    fileInput.click();
+  }, true);
+
+  fileInput.addEventListener('change', () => {
+    const file = fileInput.files && fileInput.files[0];
+    if (!file || !currentImgTarget) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result;
+      const target = currentImgTarget;
+      if (target.tagName === 'IMG') {
+        target.src = dataUrl;
+      } else {
+        target.style.backgroundImage = `url('${dataUrl}')`;
+      }
+      // Sincroniza com STOCK se a imagem pertence a um item de estoque
+      const item = target.closest('.stock-item');
+      if (item && item.dataset.col != null && STOCK[item.dataset.col]) {
+        const obj = STOCK[item.dataset.col].items[item.dataset.idx];
+        const wrap = target.closest('.stock-slide-track');
+        if (obj && wrap) {
+          const imgs = [...wrap.querySelectorAll('img')];
+          const pos = imgs.indexOf(target);
+          const field = pos === 0 ? 'img' : 'img' + (pos + 1);
+          obj[field] = dataUrl;
+        }
+      }
+      fileInput.value = '';
+      currentImgTarget = null;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // ── Exportar HTML final com as edições aplicadas ──
+  saveBtn.addEventListener('click', () => {
+    const wasEditing = editing;
+    if (wasEditing) {
+      editing = false;
+      document.body.classList.remove('edit-mode');
+      markTextEditable(false);
+      toggleBtn.innerHTML = '✏️ Editar site';
+      saveBtn.classList.remove('show');
+    }
+
+    let html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+
+    // Remove elementos de UI de edição do HTML exportado
+    html = html.replace(/<style>[\s\S]*?#editToggleBtn[\s\S]*?<\/style>/, '');
+    html = html.replace(/<div id="editBanner"[^>]*>[\s\S]*?<\/div>/, '');
+    html = html.replace(/<button id="editToggleBtn"[\s\S]*?<\/button>/, '');
+    html = html.replace(/<button id="editSaveBtn"[\s\S]*?<\/button>/, '');
+    html = html.replace(/<input type="file"[^>]*accept="image\/\*"[^>]*>/, '');
+    html = html.replace(/\sdata-editable="1"/g, '');
+    html = html.replace(/\scontenteditable="true"/g, '');
+    html = html.replace(/\sdata-img-editable="1"/g, '');
+    html = html.replace(/<span class="edit-img-hint">[^<]*<\/span>/g, '');
+
+    // Atualiza o objeto STOCK com os dados em memória (já editados)
+    html = html.replace(
+      /\/\/ STOCK_DATA_START[\s\S]*?\/\/ STOCK_DATA_END/,
+      '// STOCK_DATA_START\nconst STOCK = ' + JSON.stringify(STOCK) + ';\n// STOCK_DATA_END'
+    );
+
+    const blob = new Blob([html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'index-editado.html';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  });
+})();
 </script>
 </body>
 </html>
