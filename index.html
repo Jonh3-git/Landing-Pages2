@@ -4362,6 +4362,17 @@ async function saveToDatabase() {
 await loadFromDatabase();
 
 // ── Aplica alterações de estoque salvas direto no STOCK[] ──
+if (edits.stock) {
+  Object.keys(edits.stock).forEach(col => {
+    if (!STOCK[col]) return;
+    Object.keys(edits.stock[col]).forEach(idx => {
+      const obj = STOCK[col].items[idx];
+      if (!obj) return;
+      Object.assign(obj, edits.stock[col][idx]);
+    });
+  });
+}
+
   // ── IDs estáveis para elementos gerais (fora dos itens de estoque) ──
   let txtCounter = 0;
   document.querySelectorAll(EDIT_TEXT_SELECTOR).forEach(el => {
