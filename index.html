@@ -4175,7 +4175,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(
 // ══════════════════════════════════════════════════
 // ── MODO DE EDIÇÃO (textos e fotos) ───────────────
 // ══════════════════════════════════════════════════
-(function () {
+(async function () {
   const EDIT_TEXT_SELECTOR = [
     'h1', 'h2', 'h3',
     '.hero-eyebrow span', '.brand-tagline',
@@ -4245,7 +4245,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(
 
   const saveBtn = document.createElement('button');
   saveBtn.id = 'editSaveBtn';
-  saveBtn.innerHTML = '⬇ Baixar site editado';
+saveBtn.innerHTML = '💾 Salvar alterações';
   document.body.appendChild(saveBtn);
 
   const fileInput = document.createElement('input');
@@ -4254,8 +4254,200 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(
   fileInput.style.display = 'none';
   document.body.appendChild(fileInput);
 
-  let editing = false;
-  let currentImgTarget = null;
+  const PROJECT_ID = '7a57369d-1072-4687-871b-a5f38401a24c';
+  const STORAGE_KEY = 'ecCountry_editData_' + PROJECT_ID;
+
+  // ── Persistência local (sobrevive a recarregar a página) ──
+  function loadEdits() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : { texts: {}, images: {}, backgrounds: {}, stock: {} };
+    } catch (e) {
+      return { texts: {}, images: {}, backgrounds: {}, stock: {} };
+    }
+  }
+
+  function persistEdits() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(edits));
+      return true;
+    } catch (e) {
+      console.warn('Não foi possível salvar as alterações (armazenamento cheio).', e);
+      alert('Não foi possível salvar: o armazenamento do navegador está cheio. Tente usar fotos menores.');
+      return false;
+    }
+  }
+
+  let edits = loadEdits();
+
+async function loadFromDatabase() {
+  try {
+    const response = await fetch(
+      `/api/version?projectId=${encodeURIComponent(PROJECT_ID)}`
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (
+      !data.success ||
+      !Array.isArray(data.versions) ||
+      data.versions.length === 0
+    ) {
+      console.log('Nenhuma versão encontrada no banco.');
+      return false;
+    }
+
+    // A API já retorna da mais recente para a mais antiga
+    const latestVersion = data.versions[0];
+
+    if (!latestVersion.state) {
+      return false;
+    }
+
+    // Banco passa a ser a fonte principal
+    edits = latestVersion.state;
+
+    // Atualiza o cache local também
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(edits));
+    } catch (e) {
+      console.warn('Não foi possível atualizar o cache local:', e);
+    }
+
+    console.log(
+      `✅ Versão ${latestVersion.version_number} carregada do Neon`
+    );
+
+    return true;
+
+  } catch (error) {
+    console.warn(
+      '⚠️ Não foi possível carregar do Neon. Usando dados locais.',
+      error
+    );
+
+    return false;
+  }
+}
+
+async function saveToDatabase() {
+  try {
+    const response = await fetch('/api/version', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ projectId: PROJECT_ID, state: edits })
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    const data = await response.json();
+    return !!(data && data.success);
+
+  } catch (error) {
+    console.warn(
+      '⚠️ Não foi possível salvar no Neon. As alterações continuam salvas localmente.',
+      error
+    );
+    return false;
+  }
+}
+
+  // ── Carrega a versão mais recente do banco antes de aplicar as alterações ──
+await loadFromDatabase();
+
+// ── Aplica alterações de estoque salvas direto no STOCK[] ──
+  // ── IDs estáveis para elementos gerais (fora dos itens de estoque) ──
+  let txtCounter = 0;
+  document.querySelectorAll(EDIT_TEXT_SELECTOR).forEach(el => {
+    if (el.closest('.stock-item')) return;
+    el.dataset.editId = 'txt-' + (txtCounter++);
+  });
+
+  let imgCounter = 0;
+  document.querySelectorAll('img').forEach(el => {
+    if (el.closest('.stock-item')) return;
+    el.dataset.editId = 'img-' + (imgCounter++);
+  });
+
+  let bgCounter = 0;
+  document.querySelectorAll('[style*="background-image"]').forEach(el => {
+    if (el.closest('.stock-item')) return;
+    el.dataset.editId = 'bg-' + (bgCounter++);
+  });
+
+  // ── Reaplica textos e fotos gerais salvos anteriormente ──
+  Object.keys(edits.texts).forEach(id => {
+    const el = document.querySelector('[data-edit-id="' + id + '"]');
+    if (el) el.textContent = edits.texts[id];
+  });
+  Object.keys(edits.images).forEach(id => {
+    const el = document.querySelector('[data-edit-id="' + id + '"]');
+    if (el) el.src = edits.images[id];
+  });
+  Object.keys(edits.backgrounds).forEach(id => {
+    const el = document.querySelector('[data-edit-id="' + id + '"]');
+    if (el) el.style.backgroundImage = "url('" + edits.backgrounds[id] + "')";
+  });
+
+// ── Comprime a foto no navegador antes de salvar (evita arquivos gigantes) ──
+function compressImage(file, maxWidth = 1600, quality = 0.82) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('Falha ao ler o arquivo.'));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error('Falha ao carregar a imagem.'));
+      img.onload = () => {
+        let { width, height } = img;
+        if (width > maxWidth) {
+          height = Math.round(height * (maxWidth / width));
+          width = maxWidth;
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+// ── Envia a foto comprimida para o Vercel Blob; se falhar, usa a cópia local ──
+async function uploadImageToBlob(dataUrl, hint) {
+  try {
+    const response = await fetch('/api/upload', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        projectId: PROJECT_ID,
+        filename: `${hint || 'img'}-${Date.now()}.jpg`,
+        dataUrl
+      })
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    if (!data.success || !data.url) throw new Error('Resposta inválida do upload.');
+    return data.url;
+  } catch (error) {
+    console.warn(
+      '⚠️ Não foi possível enviar a foto para o armazenamento externo. Usando cópia local.',
+      error
+    );
+    return null;
+  }
+}
+
+let editing = false;
+let currentImgTarget = null;
 
   function markTextEditable(on) {
     document.querySelectorAll(EDIT_TEXT_SELECTOR).forEach(el => {
@@ -4274,6 +4466,9 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(
     // Para <img>, o hover funciona no próprio elemento (não precisa wrapper).
     // Para divs com background-image, adicionamos um ícone de sobreposição.
     document.querySelectorAll('[style*="background-image"]').forEach(el => {
+      if (!el.closest('.stock-item') && !el.dataset.editId) {
+        el.dataset.editId = 'bg-' + (bgCounter++);
+      }
       if (el.querySelector(':scope > .edit-img-hint')) return;
       if (getComputedStyle(el).position === 'static') el.style.position = 'relative';
       const hint = document.createElement('span');
@@ -4293,24 +4488,39 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(
     if (editing) ensureImgHints();
   });
 
-  // ── Sincroniza textos dos itens de estoque de volta para STOCK[] ──
+  // ── Sincroniza textos (estoque e gerais) ao sair do campo ──
   document.addEventListener('blur', e => {
     if (!editing) return;
     const el = e.target;
     if (!el.dataset || el.dataset.editable !== '1') return;
     const item = el.closest('.stock-item');
-    if (!item) return;
-    const col = item.dataset.col, idx = item.dataset.idx;
-    if (col == null || idx == null || !STOCK[col]) return;
-    const obj = STOCK[col].items[idx];
-    if (!obj) return;
-    if (el.classList.contains('stock-name')) {
-      const m = obj.name.match(/^Ref \d+ — /);
-      obj.name = (m ? m[0] : '') + el.textContent.trim();
-    } else if (el.classList.contains('stock-desc')) {
-      obj.desc = el.textContent.trim();
-    } else if (el.classList.contains('stock-price')) {
-      obj.price = el.textContent.trim();
+    const text = el.textContent.trim();
+
+    if (item) {
+      const col = item.dataset.col, idx = item.dataset.idx;
+      if (col == null || idx == null || !STOCK[col]) return;
+      const obj = STOCK[col].items[idx];
+      if (!obj) return;
+
+      let field = null, value = text;
+      if (el.classList.contains('stock-name')) {
+        const m = obj.name.match(/^Ref \d+ — /);
+        value = (m ? m[0] : '') + text;
+        field = 'name';
+      } else if (el.classList.contains('stock-desc')) {
+        field = 'desc';
+      } else if (el.classList.contains('stock-price')) {
+        field = 'price';
+      }
+      if (!field) return;
+
+      obj[field] = value;
+      if (!edits.stock[col]) edits.stock[col] = {};
+      if (!edits.stock[col][idx]) edits.stock[col][idx] = {};
+      edits.stock[col][idx][field] = value;
+    } else {
+      if (!el.dataset.editId) return;
+      edits.texts[el.dataset.editId] = text;
     }
   }, true);
 
@@ -4326,76 +4536,93 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(
     fileInput.click();
   }, true);
 
-  fileInput.addEventListener('change', () => {
+  fileInput.addEventListener('change', async () => {
     const file = fileInput.files && fileInput.files[0];
     if (!file || !currentImgTarget) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      const dataUrl = reader.result;
-      const target = currentImgTarget;
-      if (target.tagName === 'IMG') {
-        target.src = dataUrl;
-      } else {
-        target.style.backgroundImage = `url('${dataUrl}')`;
-      }
-      // Sincroniza com STOCK se a imagem pertence a um item de estoque
-      const item = target.closest('.stock-item');
-      if (item && item.dataset.col != null && STOCK[item.dataset.col]) {
-        const obj = STOCK[item.dataset.col].items[item.dataset.idx];
-        const wrap = target.closest('.stock-slide-track');
-        if (obj && wrap) {
-          const imgs = [...wrap.querySelectorAll('img')];
-          const pos = imgs.indexOf(target);
-          const field = pos === 0 ? 'img' : 'img' + (pos + 1);
-          obj[field] = dataUrl;
-        }
-      }
+    const target = currentImgTarget;
+    const item = target.closest('.stock-item');
+
+    target.style.opacity = '0.5';
+
+    let finalUrl;
+    try {
+      const compressed = await compressImage(file);
+      const uploaded = await uploadImageToBlob(compressed, item ? 'stock' : (target.dataset.editId || 'img'));
+      // Usa a URL externa (Blob); se o upload falhar, cai para a cópia local comprimida
+      finalUrl = uploaded || compressed;
+    } catch (error) {
+      console.warn('Não foi possível processar a imagem.', error);
+      target.style.opacity = '';
       fileInput.value = '';
       currentImgTarget = null;
-    };
-    reader.readAsDataURL(file);
-  });
-
-  // ── Exportar HTML final com as edições aplicadas ──
-  saveBtn.addEventListener('click', () => {
-    const wasEditing = editing;
-    if (wasEditing) {
-      editing = false;
-      document.body.classList.remove('edit-mode');
-      markTextEditable(false);
-      toggleBtn.innerHTML = '✏️ Editar site';
-      saveBtn.classList.remove('show');
+      return;
     }
 
-    let html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+    target.style.opacity = '';
 
-    // Remove elementos de UI de edição do HTML exportado
-    html = html.replace(/<style>[\s\S]*?#editToggleBtn[\s\S]*?<\/style>/, '');
-    html = html.replace(/<div id="editBanner"[^>]*>[\s\S]*?<\/div>/, '');
-    html = html.replace(/<button id="editToggleBtn"[\s\S]*?<\/button>/, '');
-    html = html.replace(/<button id="editSaveBtn"[\s\S]*?<\/button>/, '');
-    html = html.replace(/<input type="file"[^>]*accept="image\/\*"[^>]*>/, '');
-    html = html.replace(/\sdata-editable="1"/g, '');
-    html = html.replace(/\scontenteditable="true"/g, '');
-    html = html.replace(/\sdata-img-editable="1"/g, '');
-    html = html.replace(/<span class="edit-img-hint">[^<]*<\/span>/g, '');
+    if (target.tagName === 'IMG') {
+      target.src = finalUrl;
+    } else {
+      target.style.backgroundImage = `url('${finalUrl}')`;
+    }
 
-    // Atualiza o objeto STOCK com os dados em memória (já editados)
-    html = html.replace(
-      /\/\/ STOCK_DATA_START[\s\S]*?\/\/ STOCK_DATA_END/,
-      '// STOCK_DATA_START\nconst STOCK = ' + JSON.stringify(STOCK) + ';\n// STOCK_DATA_END'
-    );
+    // Sincroniza com STOCK se a imagem pertence a um item de estoque
+    if (item && item.dataset.col != null && STOCK[item.dataset.col]) {
+      const obj = STOCK[item.dataset.col].items[item.dataset.idx];
+      const wrap = target.closest('.stock-slide-track');
+      if (obj && wrap) {
+        const imgs = [...wrap.querySelectorAll('img')];
+        const pos = imgs.indexOf(target);
+        const field = pos === 0 ? 'img' : 'img' + (pos + 1);
+        obj[field] = finalUrl;
 
-    const blob = new Blob([html], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'index-editado.html';
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
+        const col = item.dataset.col, idx = item.dataset.idx;
+        if (!edits.stock[col]) edits.stock[col] = {};
+        if (!edits.stock[col][idx]) edits.stock[col][idx] = {};
+        edits.stock[col][idx][field] = finalUrl;
+      }
+    } else if (target.dataset.editId) {
+      if (target.tagName === 'IMG') {
+        edits.images[target.dataset.editId] = finalUrl;
+      } else {
+        edits.backgrounds[target.dataset.editId] = finalUrl;
+      }
+    }
+
+    fileInput.value = '';
+    currentImgTarget = null;
   });
+
+  // ── Salvar: grava tudo no navegador, sobrevive a recarregar a página ──
+  saveBtn.addEventListener('click', async () => {
+  // 1. Salva localmente primeiro — não perde o funcionamento atual
+  const localOk = persistEdits();
+
+  if (!localOk) {
+    saveBtn.innerHTML = '⚠️ Erro local';
+    return;
+  }
+
+  // 2. Salva também no banco
+  saveBtn.innerHTML = '⏳ Salvando...';
+
+  const databaseOk = await saveToDatabase();
+
+  const original = saveBtn.innerHTML;
+
+  if (databaseOk) {
+    saveBtn.innerHTML = '✅ Salvo no banco!';
+  } else {
+    saveBtn.innerHTML = '⚠️ Local salvo';
+  }
+
+  setTimeout(() => {
+    saveBtn.innerHTML = original;
+  }, 1800);
+
+  console.log('Alterações locais:', edits);
+  console.log('Salvo no banco:', databaseOk);
+});
 })();
 </script>
 </body>

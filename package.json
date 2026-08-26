@@ -1,16 +1,10 @@
 {
-  "name": "lp-escritorio-country",
+  "name": "escritorio-country-site",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "private": true,
   "type": "module",
   "dependencies": {
-    "@neondatabase/serverless": "^1.1.0"
+    "@neondatabase/serverless": "^0.10.0",
+    "@vercel/blob": "^0.27.3"
   }
 }
